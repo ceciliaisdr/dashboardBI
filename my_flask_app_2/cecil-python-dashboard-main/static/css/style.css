@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'poppins',sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: right;
+    margin-right: 10%;
+    align-items: center;
+    min-height: 100vh;
+    background: url('/static/images/fik1.jpg') no-repeat;
+    background-size: cover;
+    background-position: center center;
+}
+
+.login-container {
+    width: 420px;
+    background: transparent;
+    border: 0.5px solid rgba(178, 164, 159, 0.868);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 15px 30px rgba(255, 255, 255, 0.2);
+    color: #ffffff ;
+    border-radius: 15px;
+    padding: 30px 40px;
+}
+
+.login-container .yupi {
+    display: flex;
+    justify-content: center; 
+    align-items: center;   
+    margin-bottom: 20px;    
+}
+
+.login-container .yupi img {
+    width: 70px;
+    /* margin-bottom: 10px; */
+    margin: auto;
+}
+
+.login-container h1 {
+    font-size: 35px;
+    text-align: center;
+}
+
+.login-container p {
+    font-size: 13px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.login-container .input-box{
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 25px 0;
+}
+.input-box input{
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    font-size: 16px;
+    color: #ffffff;
+    padding: 20px 40px 20px 20px;
+    outline: none;
+    border: 1px solid #ffffff;
+    border-radius: 40px;
+}
+
+.input-box input::placeholder{
+    color: #ffffff;
+}
+
+.input-box i{
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: #ffffff;
+}
+
+.bxs-hide {
+    content: '\f191'; /* Ikon mata tertutup (ini adalah contoh untuk BoxIcons) */
+}
+.bxs-show {
+    content: '\f193'; /* Ikon mata terbuka (ini adalah contoh untuk BoxIcons) */
+}
+
+.login-container .remember-forget{
+   display: flex;
+   justify-content: space-between;
+   font-size: 14.5px; 
+   margin: -10px 0 15px;
+   color: #ffffff ;
+}
+
+.remember-forget label input{
+    accent-color: floralwhite;
+    margin-right: 3px;
+}
+
+.login-container .login-btn{
+    width: 100%;
+    height: 45px;
+    background: #fffaf0;
+    outline: none;
+    border: none;
+    box-shadow: 0 0 10px #85581d;
+    border-radius: 40px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;
+}
+
+.login-container .login-btn:hover{
+    background: #FF885B;
+    color: #fff;
+    border-color: #fff;
+}
+/* Tambahkan gaya untuk tombol back
+.back-btn {
+   width: 100%;
+    height: 45px;
+    background: #922a04;
+    outline: none;
+    border: none;
+    box-shadow: 0 0 10px #85581d;
+    border-radius: 40px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #fff;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.back-btn:hover {
+    background-color: #f7f0ee;
+    color: #333;
+} */

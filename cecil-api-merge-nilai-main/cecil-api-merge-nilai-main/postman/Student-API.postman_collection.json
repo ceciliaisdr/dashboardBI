@@ -1,0 +1,184 @@
+{
+  "info": {
+    "name": "Student Grade Management API",
+    "description": "Complete API collection for student and grade management system",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "health"]
+        }
+      }
+    },
+    {
+      "name": "Mahasiswa",
+      "item": [
+        {
+          "name": "Sync Mahasiswa",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"angkatan\": \"2020\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mahasiswa/sync",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mahasiswa", "sync"]
+            }
+          }
+        },
+        {
+          "name": "Get Mahasiswa List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mahasiswa?page=1&limit=10&angkatan=2020",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mahasiswa"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "angkatan",
+                  "value": "2020"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Mahasiswa by NIM",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mahasiswa/2020123001",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mahasiswa", "2020123001"]
+            }
+          }
+        },
+        {
+          "name": "Get Mahasiswa with Nilai",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mahasiswa/2020123001/nilai",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mahasiswa", "2020123001", "nilai"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Nilai",
+      "item": [
+        {
+          "name": "Upload CSV Nilai",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "sample-data/sample-nilai.csv"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/nilai/upload",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "nilai", "upload"]
+            }
+          }
+        },
+        {
+          "name": "Get Nilai by NIM",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/nilai/2020123001",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "nilai", "2020123001"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Laporan",
+      "item": [
+        {
+          "name": "Generate Transkrip",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/laporan/transkrip/2020123001",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "laporan", "transkrip", "2020123001"]
+            }
+          }
+        },
+        {
+          "name": "Get Semester Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/laporan/semester-summary/2020123001",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "laporan", "semester-summary", "2020123001"]
+            }
+          }
+        },
+        {
+          "name": "Update All IPK",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/laporan/update-ipk",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "laporan", "update-ipk"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

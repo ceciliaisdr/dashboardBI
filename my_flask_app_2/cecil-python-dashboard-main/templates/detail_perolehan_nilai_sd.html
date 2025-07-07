@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail perolehan nilai S1 Sains Data</title>
+     <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/detail_perolehan_nilai_s1sisfo.css') }}"
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="flex flex-1">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+            <img
+                src="{{ url_for('static', filename='images/logo.png') }}"
+                alt="FIK Logo"
+            />
+            </div>
+            <ul class="menu">
+            <li>
+                <a href="/home"><i class="bx bx-menu"></i> Home</a>
+            </li>
+            <li>
+                <a href="/dekanukt"><i class="bx bx-wallet"></i> UKT</a>
+            </li>
+            <li>
+                <a href="/dekanstatmhs"
+                ><i class="bx bx-user"></i> Status Mahasiswa</a
+                >
+            </li>
+            <li>
+                <a href="/dekannilai" class="active"
+                ><i class="bx bx-pencil"></i> Nilai Mahasiswa</a
+                >
+            </li>
+            <li>
+                <a href="/dekankrs"><i class="bx bx-file"></i> Pengisian KRS</a>
+            </li>
+            <!-- <li>
+                <a href="/help"><i class="bx bx-help-circle"></i> Help</a>
+            </li> -->
+            </ul>
+        </div>
+
+        <div class="main-content ">
+            <header>
+                <h1>Dashboard Nilai Mahasiswa - Perolehan Nilai Mahasiswa</h1>
+                <a href="/logout"><i class="bx bx-user-circle profile-icon"></i></a>
+            </header>
+
+            <div class="kembali" style="display: flex; justify-content: space-between; ">
+                <p>
+                    <i class="bx bx-arrow-back"></i>
+                    <a href="/s1sd" class="underline text-[16px] text-gray-500 hover:text-black">Kembali</a>
+                </p>
+                <div class="export-wrapper flex gap-3 no-underline">
+                    <button class="btn-export-pdf bg-blue-400 px-4 py-3 text-white">Export as PDF</button>
+                    
+                    <select id="kelasDropdown" class="w-32">
+                        <option value="A" {% if kelas == 'A' %}selected{% endif %}>Kelas: A</option>
+                        <option value="B" {% if kelas == 'B' %}selected{% endif %}>Kelas: B</option>
+                        <option value="C" {% if kelas == 'C' %}selected{% endif %}>Kelas: C</option>
+                        <option value="D" {% if kelas == 'D' %}selected{% endif %}>Kelas: D</option>
+                        <option value="E" {% if kelas == 'E' %}selected{% endif %}>Kelas: E</option>
+                    </select>
+                </div>
+            </div>
+
+           <div id="pdfContent" class="flex flex-col gap-5 mt-5">
+                <h2 class="text-xl font-bold">Perolehan Nilai Mahasiswa</h2>
+
+                <div>
+                    <table class="table-auto">
+                         <tbody>
+                             <tr>
+                                 <td class="p-3 font-semibold">Program Studi</td>
+                                 <td>: S1 Sains Data</td>
+                             </tr>
+                             <tr>
+                                 <td class="p-3 font-semibold">Tahun Akademik</td>
+                                 <td>: {{ periode }}</td>
+                             </tr>
+                             <tr>
+                                 <td class="p-3 font-semibold">Semester</td>
+                                 <td>: {{ semester }}</td>
+                             </tr>
+                             <tr>
+                                 <td class="p-3 font-semibold">Mata Kuliah</td>
+                                 <td>: {{ matkul }}</td>
+                             </tr>
+                         </tbody>
+                     </table>
+                </div>
+     
+                 <div class="flex gap-3 my-5">
+                     <div class="flex flex-col gap-3">
+                         <h2 class="font-bold text-[16px]">Persentase Perolehan Nilai</h2>
+     
+                         <!-- Table persentase perolehan nilai -->
+                         <table class="table-auto border border-gray-300 w-full text-center">
+                             <thead class="bg-gray-100">
+                                 <tr>
+                                 <th class="border border-gray-300 px-4 py-2">Detail Nilai</th>
+                                 <th class="border border-gray-300 px-4 py-2">Jumlah</th>
+                                 <th class="border border-gray-300 px-4 py-2">Persentase</th>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 {% for item in perolehan_nilai %}
+                                 <tr>
+                                 <td class="border px-4 py-2">{{ item.grade }}</td>
+                                 <td class="border px-4 py-2">{{ item.jumlah }}</td>
+                                 <td class="border px-4 py-2">{{ item.persen }}</td>
+                                 </tr>
+                                 {% endfor %}
+                             </tbody>
+                         </table>
+     
+     
+                     </div>
+     
+                     <!-- Table Mahasiswa -->
+                     <div class="mt-9">
+                         <table class="table-auto border border-gray-300 w-full text-center">
+                             <thead class="bg-gray-100">
+                                 <tr>
+                                 <th class="border border-gray-300 px-4 py-2">NIM</th>
+                                 <th class="border border-gray-300 px-4 py-2 min-w-96">Nama Mahasiswa</th>
+                                 <th class="border border-gray-300 px-4 py-2">Kelas</th>
+                                 <th class="border border-gray-300 px-4 py-2">Nilai</th>
+                                 <th class="border border-gray-300 px-4 py-2 min-w-96">Dosen Pengampu</th>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 {% for mhs in mahasiswa %}
+                                 <tr>
+                                 <td class="border px-4 py-2">{{ mhs.nim }}</td>
+                                 <td class="border px-4 py-2">{{ mhs.nama }}</td>
+                                 <td class="border px-4 py-2">{{ mhs.kelas }}</td>
+                                 <td class="border px-4 py-2">{{ mhs.nilai }}</td>
+                                 <td class="border px-4 py-2">{{ mhs.dosen }}</td>
+                                 </tr>
+                                 {% endfor %}
+                             </tbody>
+                         </table>
+                     </div>
+                 </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        document.querySelector('.btn-export-pdf').addEventListener('click', function () {
+            const pdfContent = document.getElementById('pdfContent');
+
+            html2canvas(pdfContent, {
+            scale: 2,
+            useCORS: true,
+            }).then((canvas) => {
+            const imgData = canvas.toDataURL('image/png');
+
+            const paddingX = 60; // Padding kiri & kanan
+
+            const originalWidth = canvas.width;
+            const originalHeight = canvas.height;
+
+            const paddedWidth = originalWidth + (paddingX * 2);
+
+            const pdf = new jspdf.jsPDF({
+                orientation: 'portrait',
+                unit: 'px',
+                format: [paddedWidth, originalHeight],
+            });
+
+            // Tambahkan gambar dimulai dari x = padding kiri
+            pdf.addImage(imgData, 'PNG', paddingX, 0, originalWidth, originalHeight);
+
+            pdf.save('Perolehan_Nilai_S1_Sains_Data.pdf');
+            });
+        });
+    </script>
+
+    <script>
+        document.getElementById('kelasDropdown').addEventListener('change', function () {
+            const selected = this.value;
+            const params = new URLSearchParams(window.location.search);
+
+            params.set('kelas', selected); // Tambahkan param kelas
+            window.location.search = params.toString(); // Redirect dengan param baru
+        });
+    </script>
+
+     <style>
+      a {
+        text-decoration: none; /* Menghilangkan underline */
+        color: black;
+      }
+    </style>
+
+</body>
+</html>

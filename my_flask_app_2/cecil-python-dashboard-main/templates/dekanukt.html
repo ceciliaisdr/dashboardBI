@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard UKT</title>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/dekanukt.css') }}"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="logo">
+          <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="FIK Logo"
+          />
+        </div>
+
+        <ul class="menu">
+          <li>
+            <a href="/home"><i class="bx bx-menu"></i> Home</a>
+          </li>
+          <li>
+            <a href="/dekanukt" class="active"
+              ><i class="bx bx-wallet"></i> UKT</a
+            >
+          </li>
+          <li>
+            <a href="/dekanstatmhs"
+              ><i class="bx bx-user"></i> Status Mahasiswa</a
+            >
+          </li>
+          <li>
+            <a href="/dekannilai"
+              ><i class="bx bx-pencil"></i> Nilai Mahasiswa</a
+            >
+          </li>
+          <li>
+            <a href="/dekankrs"><i class="bx bx-file"></i> Pengisian KRS</a>
+          </li>
+          <!-- <li>
+            <a href="/help"><i class="bx bx-help-circle"></i> Help</a>
+          </li> -->
+        </ul>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <header>
+          <h1>Dashboard UKT</h1>
+          <a href="/logout"><i class="bx bx-user-circle profile-icon"></i></a>
+        </header>
+
+        <div class="dashboard1">
+          <div class="chart-table-section">
+            <div class="chart-card">
+              <h2>Persentase Pembayaran UKT</h2>
+              <div class="chart-wrapper">
+                <canvas id="uktPieChart"></canvas>
+              </div>
+
+              <div class="table-card">
+                <div class="title-section">
+                  <h2>Daftar Mahasiswa Belum Bayar UKT</h2>
+                  <div class="btn-diagram2">
+                    <button class="diagram2btn" onclick="redirectToDetailing()">
+                      Lihat Detail
+                    </button>
+                  </div>
+                  <!-- <p><a href="/detailbelumbayar"> Lihat Selengkapnya</a></p> -->
+                </div>
+
+                <!-- <table>
+                  <thead>
+                    <tr>
+                      <th>NIM</th>
+                      <th>Nama Mahasiswa</th>
+                      <th>Semester</th>
+                      <th>Program Studi</th>
+                      <th>Gol. UKT</th>
+                      <th>Total UKT</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td>2105102013</td>
+                      <td>Divasya Valentiaji</td>
+                      <td>7</td>
+                      <td>S1 Sistem Informasi</td>
+                      <td>6</td>
+                      <td>Rp 7.000.000</td>
+                    </tr>
+                    <tr>
+                      <td>221051037</td>
+                      <td>Cecilia Isadora Hutagalung</td>
+                      <td>5</td>
+                      <td>S1 Informatika</td>
+                      <td>7</td>
+                      <td>Rp 8.000.000</td>
+                    </tr>
+                    <tr>
+                      <td>2310610041</td>
+                      <td>Natasha Azzahra Azis</td>
+                      <td>3</td>
+                      <td>D3 Sistem Informasi</td>
+                      <td>4</td>
+                      <td>Rp 4.000.000</td>
+                    </tr>
+                  </tbody>
+                </table> -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard2">
+          <div class="diagram1">
+            <div class="diagram1-card">
+              <h2>
+                Total Mahasiswa yang Menunggak UKT per periode (tgl hari ini)
+              </h2>
+
+              <div class="filter-prodi">
+                <select id="prodiSelect" class="totaltunggakan">
+                  <option value="all">Semua</option>
+                  <option value="S1 Informatika">S1 Informatika</option>
+                  <option value="S1 Sistem Informasi">
+                    S1 Sistem Informasi
+                  </option>
+                  <option value="DIII Sistem Informasi">
+                    D3 Sistem Informasi
+                  </option>
+                  <option value="S1 Sains Data">S1 Sains Data</option>
+                </select>
+              </div>
+              <div class="chart-wrapper2">
+                <canvas id="uktBarChart" width="1500px" height="400px"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard3">
+          <div class="diagram2">
+            <div class="diagram2-card">
+              <h2>
+                Perbandingan Tunggakan Mahasiswa Aktif, Non Aktif, Cuti, Lulus,
+                Keluar, dan Drop Out
+              </h2>
+              <div class="filter-prodi">
+                <select id="Selectprodi" class="totaltunggakan">
+                  <option value="all">Semua</option>
+                  <option value="S1 Informatika">S1 Informatika</option>
+                  <option value="S1 Sistem Informasi">
+                    S1 Sistem Informasi
+                  </option>
+                  <option value="DIII Sistem Informasi">
+                    D3 Sistem Informasi
+                  </option>
+                  <option value="S1 Sains Data">S1 Sains Data</option>
+                </select>
+              </div>
+              <div class="chart-wrapper3">
+                <canvas id="uktLineChart"></canvas>
+              </div>
+
+              <div class="btn-diagram2">
+                <button class="diagram2btn" onclick="redirectToDetail()">
+                  Lihat Detail
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard4">
+          <div class="diagram4">
+            <div class="titledashboard">
+              <h2 class="title-dashboard4">Total Penerimaan UKT</h2>
+            </div>
+
+            <div class="dropdown">
+              <select id="periodeSelect" class="terimaukt">
+                <option value="">Pilih Periode</option>
+                <option value="Ganjil">Ganjil</option>
+                <option value="Genap">Genap</option>
+              </select>
+            </div>
+
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
+
+        <div class="dashboard5" width="1000" height="1000 ">
+          <div class="diagram5">
+            <div class="titledashboard2">
+              <h2>Distribusi Mahasiswa Berdasarkan Golongan UKT</h2>
+            </div>
+
+            <div class="filters">
+              <select id="uktYearSelect" class="year-filters">
+                <option value="">Pilih Angkatan</option>
+                <option value="2020" selected>2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+              </select>
+            </div>
+
+            <div class="chart-wrapper4">
+              <canvas id="pieChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard5">
+          <div class="diagram6">
+            <div class="diagram6-card">
+              <h2>Banyak Mahasiswa yang Memperoleh KIPK dan KJMU</h2>
+              <div class="chart-wrapper5">
+                <canvas id="uktKIPKLineChart"></canvas>
+              </div>
+
+              <div class="btn-diagram6">
+                <button class="diagram6btn" onclick="redirectToDetail2()">
+                  Lihat Detail
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard6">
+          <div class="diagram7">
+            <div class="diagram7-card">
+              <h2>
+                Banyak Mahasiswa yang Mengajukan Cicilan UKT, Penurunan UKT, dan
+                Pemotongan 50%
+              </h2>
+
+              <div class="pengajuanukt">
+                <select id="yearSelect" class="year-dropdown">
+                  <option value="" disabled selected>Pilih Periode</option>
+                  <option value="2020/2021">2020/2021</option>
+                  <option value="2021/2022">2021/2022</option>
+                  <option value="2022/2023">2022/2023</option>
+                  <option value="2023/2024">2023/2024</option>
+                  <option value="2024/2025">2024/2025</option>
+                </select>
+              </div>
+
+              <div class="chart-wrapper6">
+                <canvas id="uktbandingLineChart"></canvas>
+              </div>
+
+              <div class="btn-diagram7">
+                <button class="diagram7btn" onclick="redirectToDetail3()">
+                  Lihat Detail
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="{{ url_for('static', filename='js/dekanukt.js') }}"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const periodeSelect = document.getElementById("periodeSelect");
+        const selectedPeriodeText = document.getElementById("selectedPeriode");
+
+        // Event listener ketika user memilih opsi di dropdown
+        periodeSelect.addEventListener("change", () => {
+          const selectedValue = periodeSelect.value;
+
+          if (selectedValue) {
+            selectedPeriodeText.textContent =
+              "Periode yang dipilih: " + selectedValue;
+            alert("Menampilkan data untuk semester: " + selectedValue);
+          } else {
+            selectedPeriodeText.textContent = "Periode yang dipilih: -";
+          }
+        });
+      });
+    </script>
+
+    <script>
+  function redirectToDetailing() {
+    // Route Flask yang benar (sesuai Python)
+    window.location.href = "/detail-belum-bayar";
+  }
+</script>
+
+    <script>
+      function redirectToDetail() {
+        // Redirect ke route Flask
+        window.location.href = "/detail_tunggakan";
+      }
+    </script>
+
+    <script>
+      function redirectToDetail2() {
+        // Redirect ke route Flask
+        window.location.href = "/detailKIPK";
+      }
+    </script>
+
+    <script>
+      function redirectToDetail3() {
+        // Redirect ke route Flask
+        window.location.href = "/detailpengajuan";
+      }
+    </script>
+
+    <style>
+      a {
+        text-decoration: none; /* Menghilangkan underline */
+        color: black;
+      }
+    </style>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const yearSelect = document.getElementById("yearSelect");
+
+        yearSelect.addEventListener("change", function () {
+          const selectedYear = this.value;
+          console.log("Periode yang dipilih:", selectedYear);
+          // Tambahkan logika untuk memfilter data berdasarkan tahun yang dipilih
+        });
+      });
+    </script>
+  </body>
+</html>

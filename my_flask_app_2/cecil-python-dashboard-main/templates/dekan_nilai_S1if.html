@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Mahasiswa S1 Sistem Informasi</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dekan_nilai_S1sisfo.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="FIK Logo">
+            </div>
+            <ul class="menu">
+                <li><a href="/home"><i class='bx bx-menu'></i> Home</a></li>
+                <li><a href="/dekanukt"><i class='bx bx-wallet'></i> UKT</a></li>
+                <li><a href="/dekanstatmhs"><i class='bx bx-user'></i> Status Mahasiswa</a></li>
+                <li><a href="/dekannilai" class="active"><i class='bx bx-pencil'></i> Nilai Mahasiswa</a></li>
+                <li><a href="/dekankrs"><i class='bx bx-file'></i> Pengisian KRS</a></li>
+                <!-- <li><a href="/help"><i class='bx bx-help-circle'></i> Help</a></li> -->
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header>
+                <h1>Dashboard Nilai - S1 Informatika</h1>
+                <a href="/logout"><i class='bx bx-user-circle profile-icon'></i></a>
+            </header>
+
+            <div class="kembali">
+                <p>
+                    <i class='bx bx-arrow-back'></i>
+                    <a href="/s1if">Kembali</a>
+                </p>
+            </div>
+
+            <div class="search-filter-container">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Cari nama mahasiswa...">
+                </div>
+
+                <div class="filter">
+                    <div class="dropdown">
+                        <select id="filterDropdown">
+                            <option value="all">Semua Angkatan</option>
+                        
+                        </select>
+                        <i class='bx bx-chevron-down'></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>NIM</th>
+                            <th>Nama Mahasiswa</th>
+                            <th>Semester</th>
+                            <th>Detail Mahasiswa</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchInput");
+    const filterDropdown = document.getElementById("filterDropdown");
+    const tableBody = document.getElementById("dataTable");
+
+    let allData = [];
+
+    function displayData(filteredData) {
+    tableBody.innerHTML = '';
+    if (filteredData.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="4">Data tidak ditemukan.</td></tr>';
+        return;
+    }
+
+    filteredData.forEach(mahasiswa => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${mahasiswa.nim}</td>
+            <td>${mahasiswa.nama}</td>
+            <td>${mahasiswa.semester}</td>
+            <td><a href="/detailnilaiif/${mahasiswa.nim}">Detail Mahasiswa</a></td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+    function applyFilters() {
+        const searchValue = searchInput.value.toLowerCase();
+        const filterValue = filterDropdown.value;
+
+        const filtered = allData.filter(m => {
+            const matchesName = m.nama.toLowerCase().includes(searchValue);
+            const matchesAngkatan = filterValue === "all" || m.angkatan === filterValue;
+            return matchesName && matchesAngkatan;
+        });
+
+        displayData(filtered);
+    }
+
+    fetch("/api/mahasiswa-if")
+        .then(response => response.json())
+        .then(data => {
+            allData = data;
+
+            // Isi dropdown filter angkatan secara dinamis
+            const angkatanSet = new Set(data.map(m => m.angkatan));
+            const sortedAngkatan = Array.from(angkatanSet).sort().reverse();
+            sortedAngkatan.forEach(angkatan => {
+                const option = document.createElement("option");
+                option.value = angkatan;
+                option.textContent = angkatan;
+                filterDropdown.appendChild(option);
+            });
+
+            // Tampilkan data awal
+            displayData(allData);
+
+            // Event listener untuk filter dan pencarian
+            filterDropdown.addEventListener("change", applyFilters);
+            searchInput.addEventListener("input", applyFilters);
+        });
+});
+</script>
+
+</body>
+
+</html>

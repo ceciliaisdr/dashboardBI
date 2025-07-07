@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Mahasiswa {
+  id                          Int      @id @default(autoincrement())
+  nim                         String   @unique @db.VarChar(20)
+  nama_mahasiswa              String   @db.VarChar(255)
+  jenis_kelamin               JenisKelamin
+  jalur_penerimaan           String?  @db.VarChar(50)
+  tahun_angkatan             String   @db.VarChar(4)
+  semester_masuk             String?  @db.VarChar(2)
+  tanggal_mulai_masuk        DateTime? @db.Date
+  id_program_studi           Int
+  kode_program_studi         String?  @db.VarChar(10)
+  nama_program_studi         String   @db.VarChar(255)
+  propinsi                   String?  @db.VarChar(100)
+  kota_kab                   String?  @db.VarChar(100)
+  kecamatan                  String?  @db.VarChar(100)
+  ipk                        Decimal? @db.Decimal(3,2)
+  status_mahasiswa_terakhir  String?  @db.VarChar(20)
+  penerima_beasiswa_kipk     String?  @db.VarChar(50)
+  penerima_beasiswa_kjmu     String?  @db.VarChar(50)
+  kelompok_ukt               String?  @db.VarChar(50)
+  nominal_ukt                BigInt?
+  created_at                 DateTime @default(now())
+  updated_at                 DateTime @updatedAt
+  
+  // Relations
+  nilai_mahasiswa            NilaiMahasiswa[]
+  
+  @@index([nim])
+  @@index([id_program_studi])
+  @@index([tahun_angkatan])
+  @@index([nama_mahasiswa])
+  @@map("mahasiswa")
+}
+
+model MataKuliah {
+  id         Int      @id @default(autoincrement())
+  kode_mk    String   @unique @db.VarChar(20)
+  nama_mk    String   @db.VarChar(255)
+  sks        Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  
+  // Relations
+  nilai_mahasiswa NilaiMahasiswa[]
+  
+  @@index([kode_mk])
+  @@map("mata_kuliah")
+}
+
+model Dosen {
+  id           Int      @id @default(autoincrement())
+  nama_dosen   String   @unique @db.VarChar(255)
+  title_depan  String?  @db.VarChar(50)
+  title_belakang String? @db.VarChar(50)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  
+  // Relations
+  nilai_mahasiswa NilaiMahasiswa[]
+  
+  @@index([nama_dosen])
+  @@map("dosen")
+}
+
+model NilaiMahasiswa {
+  id             Int      @id @default(autoincrement())
+  nim            String   @db.VarChar(20)
+  kode_mk        String   @db.VarChar(20)
+  nama_mk        String   @db.VarChar(255)
+  dosen_id       Int?
+  sks            Int
+  kelas          String?  @db.VarChar(10)
+  total_nilai    Decimal? @db.Decimal(5,2)
+  nilai_huruf    String?  @db.VarChar(2)
+  tahun_akademik String   @db.VarChar(9)
+  semester       String   @db.VarChar(2)
+  kurikulum      String?  @db.VarChar(50)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+  
+  // Relations
+  mahasiswa      Mahasiswa  @relation(fields: [nim], references: [nim], onDelete: Cascade)
+  mata_kuliah    MataKuliah @relation(fields: [kode_mk], references: [kode_mk])
+  dosen          Dosen?     @relation(fields: [dosen_id], references: [id])
+  
+  @@index([nim, kode_mk])
+  @@index([tahun_akademik, semester])
+  @@unique([nim, kode_mk, tahun_akademik, semester], name: "unique_nilai")
+  @@map("nilai_mahasiswa")
+}
+
+enum JenisKelamin {
+  L
+  P
+}

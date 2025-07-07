@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: student_api_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mahasiswa_db
+      MYSQL_USER: student_api
+      MYSQL_PASSWORD: password123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - student_api_network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: student_api_app
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: mysql://student_api:password123@mysql:3306/mahasiswa_db
+      EXTERNAL_API_BASE_URL: https://api.upnvj.ac.id
+      EXTERNAL_API_USERNAME: uakademik
+      EXTERNAL_API_PASSWORD: VTUzcjRrNGRlbTFrMjAyNCYh
+      EXTERNAL_API_KEY: Cspwwxq5SyTOMkq8XYcwZ1PMpYrYCwrv
+      JWT_SECRET: your-super-secret-jwt-key-for-development
+    ports:
+      - "9000:9000"
+    depends_on:
+      - mysql
+    volumes:
+      - ./logs:/app/logs
+      - ./uploads:/app/uploads
+    networks:
+      - student_api_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: student_api_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - student_api_network
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  student_api_network:
+    driver: bridge

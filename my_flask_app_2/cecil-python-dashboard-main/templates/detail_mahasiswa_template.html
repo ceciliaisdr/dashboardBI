@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Mahasiswa</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/detail_dekan_nilai_sisfo.css') }}">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="FIK Logo">
+            </div>
+            <ul class="menu">
+                <li><a href="/home"><i class='bx bx-menu'></i> Home</a></li>
+                <li><a href="/dekanukt"><i class='bx bx-wallet'></i> UKT</a></li>
+                <li><a href="/dekanstatmhs"><i class='bx bx-user'></i> Status Mahasiswa</a></li>
+                <li><a href="/dekannilai" class="active"><i class='bx bx-pencil'></i> Nilai Mahasiswa</a></li>
+                <li><a href="/dekankrs"><i class='bx bx-file'></i> Pengisian KRS</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <header>
+                <h1>Detail Mahasiswa</h1>
+                <a href="/logout"><i class='bx bx-user-circle profile-icon'></i></a>
+            </header>
+
+            <div class="kembali">
+                <p><i class="bx bx-arrow-back"></i><a href="/{{ mahasiswa.prodi_slug }}/daftar-mahasiswa" class="underline text-[16px] text-gray-500 hover:text-black">Kembali</a>
+            </div>
+            <div class="detail-container">
+                <table class="detail-table">
+                    <tbody>
+                        <tr>
+                            <td><strong>Nama Mahasiswa</strong></td>
+                            <td>:</td>
+                            <td>{{ mahasiswa.nama }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>NIM</strong></td>
+                            <td>:</td>
+                            <td>{{ mahasiswa.nim }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Semester</strong></td>
+                            <td>:</td>
+                            <td>{{ mahasiswa.semester }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Program Studi</strong></td>
+                            <td>:</td>
+                            <td>{{ mahasiswa.prodi }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Alamat</strong></td>
+                            <td>:</td>
+                            <td>{{ mahasiswa.alamat }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Status Mahasiswa</strong></td>
+                            <td>:</td>
+                            <td>{{ mahasiswa.status_mhs }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tanggal Masuk</strong></td> {# <--- BARIS TAMBAHAN #}
+                            <td>:</td>
+                            <td>{{ mahasiswa.tanggal_masuk }}</td> {# <--- BARIS TAMBAHAN #}
+                        </tr>
+                        <tr>
+                            <td><strong>Angkatan</strong></td> {# <--- BARIS TAMBAHAN #}
+                            <td>:</td>
+                            <td>{{ mahasiswa.angkatan }}</td> {# <--- BARIS TAMBAHAN #}
+                        </tr>
+                        <tr>
+                            <td><strong>IPK</strong></td>
+                            <td>:</td>
+                            <td id="ipk-value">{{ mahasiswa.ipk }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="dashboard6">
+                <div class="diagram7">
+                    <div class="diagram7-card">
+                        <h2>Perolehan IPS per Semester</h2>
+                        <div class="chart-wrapper6">
+                            <canvas id="ipsLineChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard7">
+                <div class="diagram8">
+                    <div class="diagram8-card">
+                        <h2>Perolehan Nilai Mahasiswa (Distribusi Nilai Huruf)</h2>
+                        <div class="chart-wrapper7">
+                            <canvas id="nilaiBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script id="ips-data" type="application/json">
+        {{ mahasiswa.ips_histori | tojson }}
+    </script>
+    <script id="nilai-distribusi-data" type="application/json">
+        {{ { 'labels': mahasiswa.nilai_distribusi_labels, 'data': mahasiswa.nilai_distribusi_data } | tojson }}
+    </script>
+
+    <script>
+        const ipsDataElement = document.getElementById('ips-data');
+        const ipsHistori = ipsDataElement && ipsDataElement.textContent ? JSON.parse(ipsDataElement.textContent) : [];
+
+        const nilaiDistribusiDataElement = document.getElementById('nilai-distribusi-data');
+        const nilaiDistribusi = nilaiDistribusiDataElement && nilaiDistribusiDataElement.textContent ? JSON.parse(nilaiDistribusiDataElement.textContent) : { labels: [], data: [] };
+
+        const ipsLabels = ipsHistori.map(item => item.semester);
+        const ipsValues = ipsHistori.map(item => item.ips);
+
+        const ipsCtx = document.getElementById('ipsLineChart');
+        if (ipsCtx) {
+            new Chart(ipsCtx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ipsLabels,
+                    datasets: [{
+                        label: 'IPS',
+                        data: ipsValues,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 4.0,
+                            title: {
+                                display: true,
+                                text: 'IPS'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Semester'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `IPS: ${context.raw}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        const nilaiLabels = nilaiDistribusi.labels;
+        const nilaiData = nilaiDistribusi.data;
+
+        const nilaiCtx = document.getElementById('nilaiBarChart');
+        if (nilaiCtx) {
+            new Chart(nilaiCtx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: nilaiLabels,
+                    datasets: [{
+                        label: 'Jumlah Mata Kuliah',
+                        data: nilaiData,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)',
+                            'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)',
+                            'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            },
+                            title: {
+                                display: true,
+                                text: 'Jumlah Mata Kuliah'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Nilai Huruf'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Jumlah: ${context.raw}`;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            formatter: (value) => value,
+                            color: '#000',
+                            font: {
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+        }
+    </script>
+
+    <style>
+        a {
+            text-decoration: none;
+            color: black;
+        }
+    </style>
+</body>
+
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/style.css') }}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- SweetAlert2 CDN -->
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="yupi">
+            <img src="{{ url_for('static', filename='images/yupi.png') }}" alt="Logo Universitas"></div>
+        <h1>Login to Dashboard</h1>
+        <p>Masukkan Username dan Password dengan benar</p>
+        
+        <!--Form Login-->
+        <form action="/afterlogin" method="POST">
+            <!-- Placeholder username -->
+            <div class="input-box">
+                <input type="text" placeholder="Username" id="username" name="username" required>
+                <i class='bx bxs-user'></i>
+            </div>
+
+            <!-- Placeholder password -->
+            <div class="input-box">
+                <input type="password" placeholder="Password" id="password" name="password" required>
+                <i class='bx bxs-show' id="togglePassword" style="cursor: pointer;"></i> <!-- Ikon mata -->
+            </div>
+            
+            <div class="remember-forget">
+                <label><input type="checkbox"> Ingat Saya</label>
+            </div>
+            
+            <button type="submit" class="login-btn">Login</button>
+            <!-- <button id="back-btn" class="back-btn">Back to Home</button> -->
+        </form>
+
+        
+    </div>
+
+    <!-- Display Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="flash-message" style="display: none;">
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    {% endwith %}
+
+<!-- JavaScript for showing the alert with SweetAlert2 -->
+<script>
+    // Check if there are any flash messages
+    const flashMessages = document.querySelector('.flash-message');
+    if (flashMessages) {
+        const messageText = flashMessages.textContent.trim();
+        if (messageText) {
+            let alertTitle = 'Coba Lagi';
+            let alertIcon = 'warning';
+
+            if (messageText === 'Anda berhasil logout') {
+                alertTitle = 'BERHASIL LOG OUT';
+                alertIcon = 'success';
+            } else if (messageText === 'Anda berhasil login') {
+                alertTitle = 'BERHASIL';
+                alertIcon = 'success';
+            } else if (messageText.toLowerCase().includes('berhasil')) {
+                alertTitle = 'BERHASIL';
+                alertIcon = 'success';
+            } else if (messageText.toLowerCase().includes('gagal') || messageText.toLowerCase().includes('salah')) {
+                alertTitle = 'GAGAL';
+                alertIcon = 'error';
+            }
+
+            Swal.fire({
+                icon: alertIcon,
+                title: alertTitle,
+                text: messageText,
+                confirmButtonColor: '#d43a02'
+            });
+        }
+    }
+</script>
+
+    <!-- JavaScript for toggle password visibility -->
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const passwordField = document.querySelector('#password');
+
+        togglePassword.addEventListener('click', function () {
+            // Toggle the type attribute
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            
+            // Toggle the icon (swap between show/hide)
+            this.classList.toggle('bxs-show');
+            this.classList.toggle('bxs-hide');
+        });
+    </script>
+
+     <!-- JavaScript for button "Back" -->
+     <script>
+        // Fungsi untuk kembali ke halaman sebelumnya (Home)
+        document.getElementById('back-btn').addEventListener('click', function() {
+            window.location.href = "{{ url_for('index') }}";  // Mengarahkan ke home.html (route '/')
+        });
+    </script>
+</body>
+</html>

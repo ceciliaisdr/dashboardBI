@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Status Mahasiswa</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dekanstatmhs.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="FIK Logo">
+            </div>
+            
+            <ul class="menu">
+                <li><a href="/home"><i class='bx bx-menu'></i> Home</a></li>
+                <li><a href="/dekanukt"><i class='bx bx-wallet'></i> UKT</a></li>
+                <li><a href="/dekanstatmhs" class="active"><i class='bx bx-user'></i> Status Mahasiswa</a></li>
+                <li><a href="/dekannilai"><i class='bx bx-pencil'></i> Nilai Mahasiswa</a></li>
+                <li><a href="/dekankrs"><i class='bx bx-file'></i> Pengisian KRS</a></li>
+                <!-- <li><a href="/help"><i class='bx bx-help-circle'></i> Help</a></li> -->
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header>
+                <h1>Dashboard Status Mahasiswa</h1>
+                <a href="/logout"><i class='bx bx-user-circle profile-icon'></i></a>
+            </header>
+
+            <div class="dashboard1">
+                <div class="chart-table-section">
+                    <div class="chart-card">
+                        <h2>Perbandingan Mahasiswa Aktif dan Non Aktif</h2>
+
+                        <div class="bandingaktifnon">
+                            <select id="yearDropdown" class="dropdown-select">
+                                <option value="ALL" selected>Semua Angkatan</option>
+                                <option value="2020/2021">2020</option>
+                                <option value="2021/2022">2021</option>
+                                <option value="2022/2023">2022</option>
+                                <option value="2023/2024">2023</option>
+                                <option value="2024/2025">2024</option>
+                            </select>
+                        </div>
+
+                            <div class="chart-wrapper">
+                                <canvas id="stackedBarChart"></canvas>
+                            </div>
+                    
+                        <div class="table-card">
+                <div class="title-section">
+                  <h2>Daftar Mahasiswa Non Aktif dan Aktif</h2>
+                  <div class="btn-diagram2">
+                    <button class="diagram2btn" onclick="redirectToDetailing()">
+                      Lihat Detail
+                    </button>
+                  </div>
+                  <!-- <p><a href="/detailbelumbayar"> Lihat Selengkapnya</a></p> -->
+                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard2">
+                <div class="diagram1">
+                    <div class="diagram1-card">
+                        <h2>Perbandingan Mahasiswa Aktif, Non Aktif, Cuti, Keluar, dan Drop Out</h2>
+
+                            <div class="bandingaktifnoncuti">
+                                <select id="yearSelect" class="dropdown-select">
+                                    <option value="" >Pilih Angkatan</option>
+                                    <option value="2020/2021">2020</option>
+                                    <option value="2021/2022">2021</option>
+                                    <option value="2022/2023">2022</option>
+                                    <option value="2023/2024">2023</option>
+                                    <option value="2024/2025">2024</option>
+                                </select>
+                            </div>
+
+                            <div class="chart-wrapper2">
+                                <canvas id="statBarChart" width="1500px" height="400px"></canvas>
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard3">
+                <div class="diagram2">
+                    <div class="diagram2-card">
+                        <h2>Grafik Mahasiswa Mengajukan Cuti</h2>
+                            
+                        <!-- <div class="pengajuancuti">
+                            <select id="yearCutiSelect" class="dropdown-selectcuti">
+                                <option value="" disabled selected>Angkatan</option>
+                                <option value="2020/2021">2020/2021</option>
+                                <option value="2021/2022">2021/2022</option>
+                                <option value="2022/2023">2022/2023</option>
+                                <option value="2023/2024">2023/2024</option>
+                                <option value="2024/2025">2024/2025</option>
+                            </select>
+                        </div> -->
+
+                        <div class="chart-wrapper3">
+                                <canvas id="statbandingLineChart"></canvas>
+                            </div>
+
+                        <div class="btn-diagram2">
+                            <button class="diagram2btn" onclick="redirectToDetail()">Lihat Detail</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard4">
+                <div class="diagram3">
+                    <div class="diagram3-card">
+                        <h2>Banyak Mahasiswa Melebihi Masa Periode</h2>
+
+                            <!-- <div class="MelebihiPeriode">
+                                <select id="semesterSelect" class="dropdown-select">
+                                    <option value="" selected>Pilih Semester</option>
+                                    <option value="Ganjil">Ganjil</option>
+                                    <option value="Genap">Genap</option>
+                                </select>
+                            </div> -->
+
+                            <div class="chart-wrapper4">
+                                <canvas id="statBarChartPeriode"></canvas>
+                            </div>
+
+                            <div class="btn-diagram3">
+                                <button class="diagram3btn" onclick="redirectToDetail2()">Lihat Detail</button>
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+        <script src="{{ url_for('static', filename='js/dekanstatmhs.js') }}"></script>
+
+        <script>
+            function redirectToDetail() {
+            // Redirect ke route Flask
+            window.location.href = "/detailajuancuti";
+            }
+        </script>
+
+        <script>
+            function redirectToDetail2() {
+            // Redirect ke route Flask
+            window.location.href = "/dekanstatdetaillebihperiode";
+            }
+        </script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+            const yearSelect = document.getElementById("yearSelect");
+
+            yearSelect.addEventListener("change", () => {
+                const selectedYear = yearSelect.value;
+                console.log("Periode yang dipilih:", selectedYear);
+                // Tambahkan logika filter data berdasarkan periode di sini
+            });
+        });
+        </script>
+
+        <script>
+            const yearButton = document.getElementById("yearButton");
+            const yearContent = document.getElementById("yearContent");
+            
+            // Pastikan dropdown tetap tersembunyi saat halaman dimuat
+            document.addEventListener("DOMContentLoaded", () => {
+            yearContent.style.display = "none"; // Pastikan disembunyikan saat load
+            });
+            
+            // Toggle dropdown saat tombol diklik
+            yearButton.addEventListener("click", (event) => {
+            event.stopPropagation();
+            yearContent.style.display = 
+                yearContent.style.display === "block" ? "none" : "block";
+            });
+            
+            // Tutup dropdown saat klik di luar area dropdown
+            document.addEventListener("click", () => {
+            yearContent.style.display = "none";
+            });
+        </script>
+
+        <!-- <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const yearCutiSelect = document.getElementById("yearCutiSelect");
+
+                yearCutiSelect.addEventListener("change", function () {
+                    const selectedYear = yearCutiSelect.value;
+                    console.log("Tahun Angkatan Dipilih:", selectedYear);
+                    fetchCutiData(selectedYear);
+                });
+
+                function fetchCutiData(year) {
+                    fetch(`/api/status-mahasiswa3?angkatan=${year}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            updateLineChart(data[year]);
+                        })
+                        .catch(error => {
+                            console.error("Error fetching data:", error);
+                        });
+                }
+
+                function updateLineChart(data) {
+                    const chartData = {
+                        labels: ['2020/2021', '2021/2022', '2022/2023', '2023/2024', '2024/2025'],
+                        datasets: [
+                            {
+                                label: "S1 Sistem Informasi",
+                                data: [data['S1 Sistem Informasi']?.cuti || 0], // Hanya jumlah "cuti"
+                                borderColor: "#3B82F6",
+                                backgroundColor: "#3B82F6",
+                                tension: 0.1,
+                                fill: false,
+                            },
+                            {
+                                label: "S1 Informatika",
+                                data: [data['S1 Informatika']?.cuti || 0],
+                                borderColor: "#F97316",
+                                backgroundColor: "#F97316",
+                                tension: 0.1,
+                                fill: false,
+                            },
+                            {
+                                label: "D3 Sistem Informasi",
+                                data: [data['D3 Sistem Informasi']?.cuti || 0],
+                                borderColor: "#8B5CF6",
+                                backgroundColor: "#8B5CF6",
+                                tension: 0.1,
+                                fill: false,
+                            },
+                            {
+                                label: "S1 Sains Data",
+                                data: [data['S1 Sains Data']?.cuti || 0],
+                                borderColor: "#22C55E",
+                                backgroundColor: "#22C55E",
+                                tension: 0.1,
+                                fill: false,
+                            },
+                        ]
+                    };
+
+                    const config = {
+                        type: "line",
+                        data: chartData,
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: "bottom",
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Grafik Mahasiswa Mengajukan Cuti'
+                                },
+                            },
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Tahun Angkatan'
+                                    },
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'Jumlah Mahasiswa Cuti'
+                                    },
+                                    beginAtZero: true,
+                                    ticks: {
+                                        maxTicksLimit: 5,
+                                        stepSize: 5,
+                                    },
+                                },
+                            },
+                        }
+                    };
+
+                    const statbandingLineChart = document.getElementById("statbandingLineChart");
+                    if (statbandingLineChart) {
+                        new Chart(statbandingLineChart, config);
+                    }
+                }
+            });
+        </script> -->
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const semesterSelect = document.getElementById("semesterSelect");
+
+                semesterSelect.addEventListener("change", function () {
+                const selectedSemester = semesterSelect.value;
+                console.log("Semester yang dipilih:", selectedSemester);
+                filterData(selectedSemester);
+                });
+
+            function filterData(semester) {
+                alert("Anda memilih Semester: " + semester);
+    }
+
+            // Tutup dropdown jika pengguna klik di luar
+            document.addEventListener("click", function (event) {
+                if (!semesterSelect.contains(event.target)) {
+                    semesterSelect.blur(); // Blur agar dropdown tertutup
+                }
+            });
+        });
+        </script>
+
+        <script>
+      function redirectToDetailing() {
+        // Redirect ke route Flask
+        window.location.href = "/detailaktifnon";
+      }
+    </script>
+
+        <style>
+            a {
+                text-decoration: none; /* Menghilangkan underline */
+                color: black;
+            }
+        </style>
+
+</body>
+</html>

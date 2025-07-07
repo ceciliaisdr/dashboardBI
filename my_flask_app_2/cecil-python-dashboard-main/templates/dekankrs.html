@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard KRS</title>
+        <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/dekankrs.css') }}">
+    </head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="FIK Logo">
+            </div>
+                <ul class="menu">
+                    <li><a href="/home" ><i class='bx bx-menu'></i> Home</a></li>
+                    <li><a href="/dekanukt"><i class='bx bx-wallet'></i> UKT</a></li>
+                    <li><a href="/dekanstatmhs"><i class='bx bx-user'></i> Status Mahasiswa</a></li>
+                    <li><a href="/dekannilai"><i class='bx bx-pencil'></i> Nilai Mahasiswa</a></li>
+                    <li><a href="/dekankrs" class="active"><i class='bx bx-file'></i> Pengisian KRS</a></li>
+                    <!-- <li><a href="/help"><i class='bx bx-help-circle'></i> Help</a></li> -->
+                </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header>
+                <h1>Dashboard KRS</h1>
+                <a href="/logout"><i class='bx bx-user-circle profile-icon'></i></a>
+            </header>
+
+            <div class="dashboard1">
+                <div class="chart-table-section">
+                    <div class="chart-card">
+                        <div class="table-card">
+                            <div class="title-section">
+                                <h2>Tabel Jadwal Pengisian KRS</h2>
+                            </div>
+
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Tahun Ajaran</th>
+                                        <th>Semester</th>
+                                        <th>Tanggal Mulai</th>
+                                        <th>Tanggal Selesai</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for jadwal in jadwal_krs %}
+                                    <tr>
+                                        <td>{{ jadwal.tahun_ajaran }}</td>
+                                        <td>{{ jadwal.semester }}</td>
+                                        <td>{{ jadwal.tanggal_mulai }}</td>
+                                        <td>{{ jadwal.tanggal_selesai }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard2">
+                <div class="diagram1">
+                    <div class="diagram1-card">
+                        <h2>Perbandingan Mahasiswa Aktif, Non Aktif, dan Aktif Tidak Isi KRS</h2>
+                        
+                        <div class="dropdown-container">
+                            <div class="custom-select">
+                                <select id="angkatanDropdown" class="dropdown-select">
+                                    <option value="ALL">Semua Angkatan</option>
+                                    <option value="2020">2020</option>
+                                    <option value="2021">2021</option>
+                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                </select>
+
+                            </div>
+                        </div>
+                        <div class="chart-wrapper2">
+                            <canvas id="krsBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard2">
+                <div class="diagram1">
+                    <div class="chart-card">
+                    <div class="title-section">
+                        <h2>Detail Mahasiswa Belum Isi Krs</h2>
+
+                        <div class="isi">
+                            <div class="btn-diagram2">
+                                <button class="diagram2btn" onclick="redirectToDetail()">Lihat Detail</button>
+                            </div>
+                        </div>
+                        <!-- <p><a href="/dekanbelumisikrs"> Lihat Selengkapnya</a></p> -->
+                    </div>
+
+            <!-- <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            
+                            <th>NIM</th>
+                            <th>Nama Mahasiswa</th>
+                            <th>Program Studi</th>
+                            <th>Detail Mahasiswa</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTable">
+                        <tr>
+                            <td>2110512070</td>
+                            <td>Agung Fitriah</td>
+                            <td>S1 Sistem Informasi</td>
+                            
+                            <td><a href="#" class="detail-link" 
+                                data-nama="Agung Fitriah"
+                                data-judul="Detail Mahasiswa"
+                                data-nim="2110512070" 
+                                data-prodi="S1 Sistem Informasi"
+                                data-semester="7"
+                                data-alamat="Harapan Indah Blok AA7"
+                                data-email="2110512070@mahasiswa.upnvj.ac.id"
+                                data-telp="086044595248"
+                                data-mhs="Mengajukan Cuti">
+                                Detail Mahasiswa</a>
+                         </td>
+                        </tr>
+                        <tr>
+                            <td>2310511071</td>
+                            <td>Khalista Viona</td>
+                            <td>S1 Informatika</td>
+                            
+                            <td><a href="#" class="detail-link" 
+                                data-nama="Khalista Viona"
+                                data-judul="Detail Mahasiswa"
+                                data-nim="2310511071" 
+                                data-prodi="S1 Informatika"
+                                data-semester="3"
+                                data-alamat="Jalan Irigasi 8"
+                                data-email="2310511071@mahasiswa.upnvj.ac.id"
+                                data-telp="081032811401"
+                                data-mhs="Mengajukan Cuti">
+                                Detail Mahasiswa</a>
+                         </td>
+                        </tr>
+                        <tr>
+                            <td>2210511050</td>
+                            <td>Cantika Angelia</td>
+                            <td>S1 Informatika</td>
+                        
+                            <td><a href="#" class="detail-link" 
+                                data-nama="Cantika Angelia"
+                                data-judul="Detail Mahasiswa"
+                                data-nim="2210511050" 
+                                data-prodi="S1 Informatika"
+                                data-semester="5"
+                                data-alamat="Palembang Raya Tol 59"
+                                data-email="2210511050@mahasiswa.upnvj.ac.id"
+                                data-telp="083612941309"
+                                data-mhs="Mengajukan Cuti">
+                                Detail Mahasiswa</a>
+                         </td>
+                        </tr>
+
+                        <tr>
+                            <td>2310501046</td>
+                            <td>Kristian Rumondang</td>
+                            <td>D3 Sistem Informasi</td>
+                    
+                            <td><a href="#" class="detail-link" 
+                                data-nama="Kristian Rumondang"
+                                data-judul="Detail Mahasiswa"
+                                data-nim="2310501046" 
+                                data-prodi="D3 Sistem Informasi"
+                                data-semester="3"
+                                data-alamat="Kayu Ringin Permai Kavling V No 21"
+                                data-email="2310501046@mahasiswa.upnvj.ac.id"
+                                data-telp="083610432420"
+                                data-mhs="Mengajukan Cuti">
+                                Detail Mahasiswa</a>
+                         </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div> -->
+        </div>
+    </div>
+   </div>
+</div>
+</div>
+
+<!-- Pop-Up -->
+<div class="popup-container" id="popup">
+    <div class="popup-content">
+        <span class="close-btn" id="closePopup">&times;</span>
+        <h2 id="popup-title">Detail Mahasiswa</h2>
+        <div class="popup-body">
+            <div class="profile-image">
+                <img id="popup-image" src="" alt="Profile">
+            </div>
+            <div class="details">
+                <div class="detail-item">
+                    <table class="detail-table">
+                        <tbody>
+                            <tr>
+                                <td><strong>NIM</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-nim"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Nama Mahasiswa</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-nama"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Program Studi</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-prodi"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Semester</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-semester"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Alamat</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-alamat"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Email</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-email"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>No. Telepon</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-telp"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Status Mahasiswa</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-mhs"></span></td>
+                            </tr>
+
+                            <!-- <tr>
+                                <td><strong>Periode</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-periode"></span></td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+            <script src="{{ url_for('static', filename='js/dekankrs.js') }}"></script>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                const yearDropdown = document.getElementById("yearDropdown");
+
+                yearDropdown.addEventListener("change", function () {
+                    const selectedYear = this.value;
+                    // alert("Anda memilih angkatan: " + selectedYear);
+                    // Di sini bisa tambahkan logika lain, misalnya fetch data berdasarkan angkatan
+                });
+
+                // Menutup dropdown jika klik di luar elemen
+                document.addEventListener("click", function (event) {
+                    if (!yearDropdown.contains(event.target)) {
+                        yearDropdown.blur(); // Blur agar dropdown tidak aktif
+                    }
+                });
+            });
+            </script>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                const selectedOption = document.getElementById("selected-option");
+                const dropdownOptions = document.getElementById("dropdown-options");
+                const customSelect = document.querySelector(".custom-select");
+
+                // Event untuk menampilkan dropdown saat diklik
+                selectedOption.addEventListener("click", function () {
+                    customSelect.classList.toggle("active");
+                });
+
+                // Event untuk memilih angkatan dan menutup dropdown
+                document.querySelectorAll(".option").forEach(option => {
+                    option.addEventListener("click", function () {
+                        selectedOption.textContent = this.textContent;
+                        customSelect.classList.remove("active");
+                        console.log("Angkatan dipilih:", this.dataset.value);
+                    });
+                });
+
+                // Event untuk menutup dropdown ketika klik di luar
+                document.addEventListener("click", function (event) {
+                    if (!customSelect.contains(event.target)) {
+                        customSelect.classList.remove("active");
+                    }
+                });
+            });
+
+            </script>
+
+                <script>
+        function redirectToDetail() {
+        // Redirect ke route Flask
+        window.location.href = "/dekanbelumisikrs";
+        }
+    </script>
+
+            <script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const detailLinks = document.querySelectorAll(".detail-link");
+    const popupContainer = document.getElementById("popup");
+    const popupTitle = document.getElementById("popup-title");
+    const popupImage = document.getElementById("popup-image");
+    const popupNama = document.getElementById("popup-nama");
+    const popupNim = document.getElementById("popup-nim");
+    const popupProdi = document.getElementById("popup-prodi");
+    const popupSemester = document.getElementById("popup-semester");
+    const popupAlamat = document.getElementById("popup-alamat");
+    const popupEmail = document.getElementById("popup-email");
+    const popupTelp = document.getElementById("popup-telp");
+    const popupMhs = document.getElementById("popup-mhs");
+    const closePopup = document.getElementById("closePopup");
+
+    detailLinks.forEach(link => {
+        link.addEventListener("click", function(event) {
+            event.preventDefault();
+
+            // Ambil data dari atribut
+            const judul = this.getAttribute("data-judul");
+            const nama = this.getAttribute("data-nama");
+            const nim = this.getAttribute("data-nim");
+            const prodi = this.getAttribute("data-prodi");
+            const semester = this.getAttribute("data-semester");
+            const alamat = this.getAttribute("data-alamat");
+            const email = this.getAttribute("data-email");
+            const telp = this.getAttribute("data-telp");
+            const mhs = this.getAttribute("data-mhs");
+            const foto = this.getAttribute("data-foto");
+
+            //Kalau gak ada foto
+            popupImage.src = foto || "https://via.placeholder.com/80/cccccc/ffffff?text=No+Image";
+
+            // Perbarui isi pop-up
+            popupTitle.textContent = judul;
+            popupImage.src = foto;
+            popupNama.textContent = nama;
+            popupNim.textContent = nim;
+            popupProdi.textContent = prodi;
+            popupSemester.textContent = semester;
+            popupAlamat.textContent = alamat;
+            popupEmail.textContent = email;
+            popupMhs.textContent = mhs;
+            popupTelp.textContent = telp;
+
+            // Tampilkan pop-up
+            popupContainer.style.display = "flex";
+        });
+    });
+
+    // Tutup popup
+    closePopup.addEventListener("click", function() {
+        popupContainer.style.display = "none";
+    });
+
+    // Tutup popup saat klik di luar konten
+    popupContainer.addEventListener("click", function(e) {
+        if (e.target === popupContainer) {
+            popupContainer.style.display = "none";
+        }
+    });
+});
+
+</script>
+</body>
+</html>
