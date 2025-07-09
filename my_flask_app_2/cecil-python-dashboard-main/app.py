@@ -13,12 +13,12 @@ app.secret_key = 'your_secret_key'
 
 # Dummy users untuk login
 dummy_users = [
-    {"username": "dekan", "password": "dekan123", "role": "dekan"},
-    {"username": "wakil dekan", "password": "wadek123", "role": "wadek1"},
-    {"username": "wakil dekan 2", "password": "wadek223", "role": "wadek2"},
-    {"username": "tata usaha", "password": "tu123", "role": "ktu"},
-    {"username": "koordinator program studi", "password": "kaprodi123", "role": "kaprodi"},
-    {"username": "akademik mahasiswa", "password": "mikmas123", "role": "akademik"},
+    {"username": "dekan", "password": "dekanfik", "role": "dekan"},
+    {"username": "wakil dekan", "password": "wadek1fik", "role": "wadek1"},
+    {"username": "wakil dekan 2", "password": "wadek2fik", "role": "wadek2"},
+    {"username": "tata usaha", "password": "tatausahafik", "role": "ktu"},
+    {"username": "koordinator program studi", "password": "kaprodifik", "role": "kaprodi"},
+    {"username": "akademik mahasiswa", "password": "mikmasfik", "role": "akademik"},
     {"username": "admin", "password": "admin123", "role": "admin"}
 ]
 
