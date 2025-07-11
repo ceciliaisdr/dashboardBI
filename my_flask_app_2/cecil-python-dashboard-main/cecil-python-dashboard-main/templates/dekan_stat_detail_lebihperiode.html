@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Mahasiswa Melebihi Periode</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dekan_stat_detail_lebihperiode.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="FIK Logo">
+            </div>
+            <ul class="menu">
+                <li><a href="/home"><i class='bx bx-menu'></i> Home</a></li>
+                <li><a href="/dekanukt"><i class='bx bx-wallet'></i> UKT</a></li>
+                <li><a href="/dekanstatmhs" class="active"><i class='bx bx-user'></i> Status Mahasiswa</a></li>
+                <li><a href="/dekannilai"><i class='bx bx-pencil'></i> Nilai Mahasiswa</a></li>
+                <li><a href="/dekankrs"><i class='bx bx-file'></i> Pengisian KRS</a></li>
+                <!-- <li><a href="/help"><i class='bx bx-help-circle'></i> Help</a></li> -->
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header>
+                <h1>Dashboard Status Mahasiswa - Daftar Mahasiswa Melebihi Periode</h1>
+                <a href="/logout"><i class='bx bx-user-circle profile-icon'></i></a>
+            </header>
+
+            <div class="kembali">
+                <p>
+                    <i class='bx bx-arrow-back'></i>
+                    <a href="/dekanstatmhs">Kembali</a>
+                </p>
+            </div>
+
+            <div class="search-filter-container">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Cari nama mahasiswa...">
+                </div>
+
+                <div class="export">
+                    <button id="exportPdfBtn">Export as PDF</button>
+                </div>
+
+                <div class="filter">
+                    <div class="dropdown">
+                        <select id="statusFilter">
+                            <option value="all">Semua Status Mahasiswa</option>
+                            <option value="AKTIF">AKTIF</option>
+                            <option value="NON-AKTIF">NON-AKTIF</option>
+                            <option value="CUTI">CUTI</option>
+                        </select>
+                    </div>
+
+                    <div class="dropdown">
+                    <select id="angkatanFilter">
+                        <option value="all">Semua Angkatan</option>
+                        {% for tahun in range(2018, 2025) %}
+                            <option value="{{ tahun }}">{{ tahun }}</option>
+                        {% endfor %}
+                    </select>
+                    </div>
+
+                    <div class="dropdown">
+                        <select id="filterDropdown">
+                            <option value="all">Semua Program Studi</option>
+                            <option value="S1 Sistem Informasi">S1 Sistem Informasi</option>
+                            <option value="S1 Informatika">S1 Informatika</option>
+                            <option value="S1 Sains Data">S1 Sains Data</option>
+                            <option value="DIII Sistem Informasi">D3 Sistem Informasi</option>
+                        </select>
+                        <i class='bx bx-chevron-down'></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>NIM</th>
+                            <th>Nama Mahasiswa</th>
+                            <th>Program Studi</th>
+                            <th>Semester</th>
+                            <th>IPK</th>
+                            <th>Status Mahasiswa</th>
+                            <th>Detail Mahasiswa</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTable">
+                        {% for mahasiswa in mahasiswa_list %}
+                        <tr data-status="{{ mahasiswa.status }}" data-angkatan="{{ mahasiswa.angkatan }}">
+                            <td>{{ mahasiswa.nim }}</td>
+                            <td>{{ mahasiswa.nama }}</td>
+                            <td>{{ mahasiswa.prodi }}</td>
+                            <td>{{ mahasiswa.semester }}</td>
+                            <td>{{ mahasiswa.ipk }}</td>
+                            <td>{{ mahasiswa.status }}</td>
+                            <td><a href="#" class="detail-link"
+                                data-nama="{{ mahasiswa.nama }}"
+                                data-judul="Detail Mahasiswa"
+                                data-nim="{{ mahasiswa.nim }}"
+                                data-prodi="{{ mahasiswa.prodi }}"
+                                data-semester="{{ mahasiswa.semester }}"
+                                data-alamat="{{ mahasiswa.alamat }}"
+                                data-email="{{ mahasiswa.email }}"
+                                data-telp="{{ mahasiswa.telp }}"
+                                data-mhs="{{ mahasiswa.status }}"
+                                data-ipk="{{ mahasiswa.ipk }}"
+                                data-catatan="{{ mahasiswa.catatan }}">
+                                Detail Mahasiswa</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pop-Up -->
+    <div class="popup-container" id="popup">
+        <div class="popup-content">
+            <span class="close-btn" id="closePopup">&times;</span>
+            <h2 id="popup-title">Detail Mahasiswa</h2>
+            <div class="popup-body">
+                <div class="profile-image">
+                    <img id="popup-image" src="{{ url_for('static', filename='images/default-profile.png') }}" alt="Profile">
+                </div>
+                <div class="details">
+                    <table class="detail-table">
+                        <tbody>
+                            <tr><td><strong>NIM</strong></td><td>:</td><td><span id="popup-nim"></span></td></tr>
+                            <tr><td><strong>Nama Mahasiswa</strong></td><td>:</td><td><span id="popup-nama"></span></td></tr>
+                            <tr><td><strong>Program Studi</strong></td><td>:</td><td><span id="popup-prodi"></span></td></tr>
+                            <tr><td><strong>Semester</strong></td><td>:</td><td><span id="popup-semester"></span></td></tr>
+                            <tr><td><strong>IPK</strong></td><td>:</td><td><span id="popup-ipk"></span></td></tr>
+                            <tr><td><strong>Alamat</strong></td><td>:</td><td><span id="popup-alamat"></span></td></tr>
+                            <tr><td><strong>Email</strong></td><td>:</td><td><span id="popup-email"></span></td></tr>
+                            <tr><td><strong>No. Telepon</strong></td><td>:</td><td><span id="popup-telp"></span></td></tr>
+                            <tr><td><strong>Status Mahasiswa</strong></td><td>:</td><td><span id="popup-mhs"></span></td></tr>
+                            <tr><td><strong>Catatan</strong></td><td>:</td><td><span id="popup-catatan"></span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script> window.jsPDF = window.jspdf.jsPDF; </script>
+    
+    <script>
+document.getElementById("exportPdfBtn").addEventListener("click", () => {
+    const selectedStatus = document.getElementById("statusFilter").value;
+    const selectedAngkatan = document.getElementById("angkatanFilter").value;
+    const selectedProdi = document.getElementById("filterDropdown").value;
+
+    const statusText = selectedStatus === "all" ? "semua status" : selectedStatus.toLowerCase();
+    const prodiText = selectedProdi === "all" ? "semua prodi" : selectedProdi;
+    const angkatanText = selectedAngkatan === "all" ? "semua angkatan" : "angkatan " + selectedAngkatan;
+
+    const judul = document.createElement("h2");
+    judul.textContent = `Mahasiswa ${statusText} ${prodiText} ${angkatanText} Melebihi Periode`;
+    judul.style.fontSize = "16px";
+    judul.style.marginBottom = "10px";
+
+    const originalTable = document.querySelector(".table-container table");
+    const clonedTable = originalTable.cloneNode(true);
+
+    // Hapus kolom terakhir (Detail Mahasiswa)
+    const theadRow = clonedTable.querySelector("thead tr");
+    if (theadRow.children.length >= 7) {
+        theadRow.removeChild(theadRow.children[6]);
+    }
+    clonedTable.querySelectorAll("tbody tr").forEach(row => {
+        if (row.children.length >= 7) {
+            row.removeChild(row.children[6]);
+        }
+    });
+
+    const tempContainer = document.createElement("div");
+    tempContainer.style.padding = "20px";
+    tempContainer.style.backgroundColor = "white";
+    tempContainer.style.color = "black";
+    tempContainer.appendChild(judul);
+    tempContainer.appendChild(clonedTable);
+
+    document.body.appendChild(tempContainer);
+
+    html2canvas(tempContainer).then(canvas => {
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF('l', 'mm', 'a4');
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+        pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight);
+        pdf.save("mahasiswa_lebih_periode.pdf");
+
+        document.body.removeChild(tempContainer);
+    });
+});
+</script>
+
+
+    <script>
+        const popup = document.getElementById('popup');
+        const popupContent = document.querySelector('.popup-content');
+        const closePopup = document.getElementById('closePopup');
+            
+        // Tampilkan popup dengan isi data
+        document.querySelectorAll('.detail-link').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.getElementById('popup-title').textContent = this.dataset.judul;
+                document.getElementById('popup-nim').textContent = this.dataset.nim;
+                document.getElementById('popup-nama').textContent = this.dataset.nama;
+                document.getElementById('popup-prodi').textContent = this.dataset.prodi;
+                document.getElementById('popup-semester').textContent = this.dataset.semester;
+                document.getElementById('popup-alamat').textContent = this.dataset.alamat;
+                document.getElementById('popup-email').textContent = this.dataset.email;
+                document.getElementById('popup-telp').textContent = this.dataset.telp;
+                document.getElementById('popup-mhs').textContent = this.dataset.mhs;
+                document.getElementById('popup-catatan').textContent = this.dataset.catatan;
+                document.getElementById('popup-ipk').textContent = this.dataset.ipk;
+                popup.style.display = 'flex'; // penting: display flex untuk centering
+            });
+        });
+    
+        // Tutup popup jika klik tombol close
+        closePopup.addEventListener('click', function () {
+            popup.style.display = 'none';
+        });
+    
+        // Tutup popup jika klik di luar popup-content
+        popup.addEventListener('click', function (event) {
+            if (!popupContent.contains(event.target)) {
+                popup.style.display = 'none';
+            }
+        });
+    </script>
+
+    <script>
+            // Pencarian
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const search = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#dataTable tr');
+            rows.forEach(row => {
+                const nim = row.children[0].textContent.toLowerCase();
+                const nama = row.children[1].textContent.toLowerCase();
+                const match = nim.includes(search) || nama.includes(search);
+                row.style.display = match ? '' : 'none';
+            });
+        });
+
+        // Filter Program Studi
+        document.getElementById('filterDropdown').addEventListener('change', applyFilters);
+        document.getElementById('statusFilter').addEventListener('change', applyFilters);
+        document.getElementById('angkatanFilter').addEventListener('change', applyFilters);
+
+        function applyFilters() {
+            const selectedProdi = document.getElementById('filterDropdown').value;
+            const selectedStatus = document.getElementById('statusFilter').value;
+            const selectedAngkatan = document.getElementById('angkatanFilter').value;
+            const rows = document.querySelectorAll('#dataTable tr');
+
+            rows.forEach(row => {
+                const prodi = row.children[2].textContent;
+                const status = row.getAttribute('data-status');
+                const angkatan = row.getAttribute('data-angkatan');
+
+                const matchProdi = selectedProdi === 'all' || prodi === selectedProdi;
+                const matchStatus = selectedStatus === 'all' || status === selectedStatus;
+                const matchAngkatan = selectedAngkatan === 'all' || angkatan === selectedAngkatan;
+
+                row.style.display = (matchProdi && matchStatus && matchAngkatan) ? '' : 'none';
+            });
+        }
+    </script>
+
+    
+</body>
+</html>

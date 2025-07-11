@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Mahasiswa Pengajuan</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dekan_detail_uktpengajuan.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="FIK Logo">
+            </div>
+            <ul class="menu">
+                <li><a href="/home"><i class='bx bx-menu'></i> Home</a></li>
+                <li><a href="/dekanukt" class="active"><i class='bx bx-wallet'></i> UKT</a></li>
+                <li><a href="/dekanstatmhs"><i class='bx bx-user'></i> Status Mahasiswa</a></li>
+                <li><a href="/dekannilai"><i class='bx bx-pencil'></i> Nilai Mahasiswa</a></li>
+                <li><a href="/dekankrs"><i class='bx bx-file'></i> Pengisian KRS</a></li>
+                <!-- <li><a href="/help"><i class='bx bx-help-circle'></i> Help</a></li> -->
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header>
+                <h1>Dashboard UKT - Detail Pengajuan Cicilan UKT, Penurunan UKT, dan Pemotongan 50%</h1>
+                <a href="/logout"><i class='bx bx-user-circle profile-icon'></i></a>
+            </header>
+
+            <div class="kembali">
+                <p>
+                    <i class='bx bx-arrow-back'></i>
+                    <a href="/dekanukt">Kembali</a>
+                </p>
+            </div>
+
+            <div class="search-filter-container">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Cari nama mahasiswa...">
+                </div>
+
+                <div class="filter">
+                    <div class="dropdown">
+                        <select id="filterDropdown">
+                            <option value="all">Program Studi</option>
+                            <option value="S1 Sistem Informasi">S1 Sistem Informasi</option>
+                            <option value="S1 Informatika">S1 Informatika</option>
+                            <option value="D3 Sistem Informasi">D3 Sistem Informasi</option>
+                        </select>
+                        <i class='bx bx-chevron-down'></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>NIM</th>
+                            <th>Nama Mahasiswa</th>
+                            <th>Semester</th>
+                            <th>Program Studi</th>
+                            <th>Gol. UKT</th>
+                            <th>Tarif UKT</th>
+                            <th>Status Bayar</th>
+                            <th>Detail Mahasiswa</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTable">
+                       <tr><td>2310511003</td><td>Siti Aisyah</td><td>3</td><td>S1 Sistem Informasi</td><td>4</td><td>Rp 5.100.000</td><td>Pemotongan 50%</td><td><a href="#" class="detail-link" data-nama="Siti Aisyah" data-judul="Detail Mahasiswa" data-nim="2310511003" data-prodi="S1 Sistem Informasi" data-semester="3" data-alamat="Jl. Asia Afrika, Bandung" data-email="2310511003@mahasiswa.upnvj.ac.id" data-telp="081223344556" data-mhs="Aktif" data-golongan="4" data-ukt="Rp 5.100.000" data-stat="Pemotongan 50%">Detail Mahasiswa</a></td></tr>
+<tr><td>2310511004</td><td>Agus Salim</td><td>6</td><td>S1 Informatika</td><td>7</td><td>Rp 8.000.000</td><td>Penurunan UKT</td><td><a href="#" class="detail-link" data-nama="Agus Salim" data-judul="Detail Mahasiswa" data-nim="2310511004" data-prodi="S1 Informatika" data-semester="6" data-alamat="Jl. Gajah Mada, Yogyakarta" data-email="2310511004@mahasiswa.upnvj.ac.id" data-telp="082334455667" data-mhs="Aktif" data-golongan="7" data-ukt="Rp 8.000.000" data-stat="Penurunan UKT">Detail Mahasiswa</a></td></tr>
+<tr><td>2310511005</td><td>Dewi Lestari</td><td>5</td><td>S1 Sistem Informasi</td><td>5</td><td>Rp 6.000.000</td><td>Cicilan UKT</td><td><a href="#" class="detail-link" data-nama="Dewi Lestari" data-judul="Detail Mahasiswa" data-nim="2310511005" data-prodi="S1 Sistem Informasi" data-semester="5" data-alamat="Jl. Dr. Sutomo, Medan" data-email="2310511005@mahasiswa.upnvj.ac.id" data-telp="081345678901" data-mhs="Aktif" data-golongan="5" data-ukt="Rp 6.000.000" data-stat="Cicilan UKT">Detail Mahasiswa</a></td></tr>
+<tr><td>2310511006</td><td>Rizky Pratama</td><td>4</td><td>D3 Sistem Informasi</td><td>3</td><td>Rp 4.500.000</td><td>Penurunan UKT</td><td><a href="#" class="detail-link" data-nama="Rizky Pratama" data-judul="Detail Mahasiswa" data-nim="2310511006" data-prodi="D3 Sistem Informasi" data-semester="4" data-alamat="Jl. Soekarno-Hatta, Malang" data-email="2310511006@mahasiswa.upnvj.ac.id" data-telp="089612345678" data-mhs="Aktif" data-golongan="3" data-ukt="Rp 4.500.000" data-stat="Penurunan UKT">Detail Mahasiswa</a></td></tr>
+<tr><td>2310511007</td><td>Maya Sari</td><td>7</td><td>S1 Sistem Informasi</td><td>6</td><td>Rp 7.200.000</td><td>Pemotongan 50%</td><td><a href="#" class="detail-link" data-nama="Maya Sari" data-judul="Detail Mahasiswa" data-nim="2310511007" data-prodi="S1 Sistem Informasi" data-semester="7" data-alamat="Jl. MT Haryono, Balikpapan" data-email="2310511007@mahasiswa.upnvj.ac.id" data-telp="081276543210" data-mhs="Aktif" data-golongan="6" data-ukt="Rp 7.200.000" data-stat="Pemotongan 50%">Detail Mahasiswa</a></td></tr>
+<tr><td>2310511008</td><td>Andi Saputra</td><td>8</td><td>S1 Informatika</td><td>7</td><td>Rp 8.000.000</td><td>Cicilan UKT</td><td><a href="#" class="detail-link" data-nama="Andi Saputra" data-judul="Detail Mahasiswa" data-nim="2310511008" data-prodi="S1 Informatika" data-semester="8" data-alamat="Jl. Slamet Riyadi, Solo" data-email="2310511008@mahasiswa.upnvj.ac.id" data-telp="082156789043" data-mhs="Aktif" data-golongan="7" data-ukt="Rp 8.000.000" data-stat="Cicilan UKT">Detail Mahasiswa</a></td></tr>
+<tr><td>2310511009</td><td>Lina Marlina</td><td>6</td><td>S1 Sistem Informasi</td><td>5</td><td>Rp 6.300.000</td><td>Penurunan UKT</td><td><a href="#" class="detail-link" data-nama="Lina Marlina" data-judul="Detail Mahasiswa" data-nim="2310511009" data-prodi="S1 Sistem Informasi" data-semester="6" data-alamat="Jl. Jenderal Sudirman, Palembang" data-email="2310511009@mahasiswa.upnvj.ac.id" data-telp="081234567801" data-mhs="Aktif" data-golongan="5" data-ukt="Rp 6.300.000" data-stat="Penurunan UKT">Detail Mahasiswa</a></td></tr>
+<tr><td>2310511010</td><td>Budi Hartono</td><td>3</td><td>D3 Sistem Informasi</td><td>4</td><td>Rp 5.000.000</td><td>Cicilan UKT</td><td><a href="#" class="detail-link" data-nama="Budi Hartono" data-judul="Detail Mahasiswa" data-nim="2310511010" data-prodi="D3 Sistem Informasi" data-semester="3" data-alamat="Jl. Ahmad Yani, Pontianak" data-email="2310511010@mahasiswa.upnvj.ac.id" data-telp="082134567822" data-mhs="Aktif" data-golongan="4" data-ukt="Rp 5.000.000" data-stat="Cicilan UKT">Detail Mahasiswa</a></td></tr>
+<tr><td>2310511011</td><td>Nur Azizah</td><td>5</td><td>S1 Informatika</td><td>6</td><td>Rp 7.000.000</td><td>Pemotongan 50%</td><td><a href="#" class="detail-link" data-nama="Nur Azizah" data-judul="Detail Mahasiswa" data-nim="2310511011" data-prodi="S1 Informatika" data-semester="5" data-alamat="Jl. Pemuda, Semarang" data-email="2310511011@mahasiswa.upnvj.ac.id" data-telp="085634267811" data-mhs="Aktif" data-golongan="6" data-ukt="Rp 7.000.000" data-stat="Pemotongan 50%">Detail Mahasiswa</a></td></tr>
+<tr><td>2310511012</td><td>Galang Permana</td><td>4</td><td>S1 Sistem Informasi</td><td>4</td><td>Rp 5.800.000</td><td>Cicilan UKT</td><td><a href="#" class="detail-link" data-nama="Galang Permana" data-judul="Detail Mahasiswa" data-nim="2310511012" data-prodi="S1 Sistem Informasi" data-semester="4" data-alamat="Jl. Imam Bonjol, Pekanbaru" data-email="2310511012@mahasiswa.upnvj.ac.id" data-telp="085212345666" data-mhs="Aktif" data-golongan="4" data-ukt="Rp 5.800.000" data-stat="Cicilan UKT">Detail Mahasiswa</a></td></tr>
+<tr><td>2310511018</td><td>Galuh Paramita</td><td>5</td><td>S1 Sistem Informasi</td><td>5</td><td>Rp 6.000.000</td><td>Cicilan UKT</td><td><a href="#" class="detail-link" data-nama="Galuh Paramita" data-judul="Detail Mahasiswa" data-nim="2310511018" data-prodi="S1 Sistem Informasi" data-semester="5" data-alamat="Jl. Siliwangi, Bandung" data-email="2310511018@mahasiswa.upnvj.ac.id" data-telp="081234567818" data-mhs="Aktif" data-golongan="5" data-ukt="Rp 6.000.000" data-stat="Cicilan UKT">Detail Mahasiswa</a></td></tr>
+<tr><td>2310511019</td><td>Bagus Prasetyo</td><td>6</td><td>D3 Sistem Informasi</td><td>4</td><td>Rp 5.000.000</td><td>Pemotongan 50%</td><td><a href="#" class="detail-link" data-nama="Bagus Prasetyo" data-judul="Detail Mahasiswa" data-nim="2310511019" data-prodi="D3 Sistem Informasi" data-semester="6" data-alamat="Jl. Pattimura, Malang" data-email="2310511019@mahasiswa.upnvj.ac.id" data-telp="081298745621" data-mhs="Aktif" data-golongan="4" data-ukt="Rp 5.000.000" data-stat="Pemotongan 50%">Detail Mahasiswa</a></td></tr>
+<tr><td>2310511020</td><td>Rizki Maulana</td><td>7</td><td>S1 Informatika</td><td>6</td><td>Rp 7.200.000</td><td>Penurunan UKT</td><td><a href="#" class="detail-link" data-nama="Rizki Maulana" data-judul="Detail Mahasiswa" data-nim="2310511020" data-prodi="S1 Informatika" data-semester="7" data-alamat="Jl. Diponegoro, Medan" data-email="2310511020@mahasiswa.upnvj.ac.id" data-telp="081398723456" data-mhs="Aktif" data-golongan="6" data-ukt="Rp 7.200.000" data-stat="Penurunan UKT">Detail Mahasiswa</a></td></tr>
+<tr><td>2310511021</td><td>Putri Ayu Lestari</td><td>8</td><td>S1 Sistem Informasi</td><td>7</td><td>Rp 8.100.000</td><td>Pemotongan 50%</td><td><a href="#" class="detail-link" data-nama="Putri Ayu Lestari" data-judul="Detail Mahasiswa" data-nim="2310511021" data-prodi="S1 Sistem Informasi" data-semester="8" data-alamat="Jl. Ahmad Yani, Palembang" data-email="2310511021@mahasiswa.upnvj.ac.id" data-telp="082134567821" data-mhs="Aktif" data-golongan="7" data-ukt="Rp 8.100.000" data-stat="Pemotongan 50%">Detail Mahasiswa</a></td></tr>
+<tr><td>2310511022</td><td>Akbar Ramadhan</td><td>3</td><td>D3 Sistem Informasi</td><td>3</td><td>Rp 4.600.000</td><td>Cicilan UKT</td><td><a href="#" class="detail-link" data-nama="Akbar Ramadhan" data-judul="Detail Mahasiswa" data-nim="2310511022" data-prodi="D3 Sistem Informasi" data-semester="3" data-alamat="Jl. MT Haryono, Balikpapan" data-email="2310511022@mahasiswa.upnvj.ac.id" data-telp="083812345622" data-mhs="Aktif" data-golongan="3" data-ukt="Rp 4.600.000" data-stat="Cicilan UKT">Detail Mahasiswa</a></td></tr>
+<tr><td>2310511023</td><td>Siti Rohmah</td><td>6</td><td>S1 Informatika</td><td>5</td><td>Rp 6.300.000</td><td>Penurunan UKT</td><td><a href="#" class="detail-link" data-nama="Siti Rohmah" data-judul="Detail Mahasiswa" data-nim="2310511023" data-prodi="S1 Informatika" data-semester="6" data-alamat="Jl. Merdeka, Padang" data-email="2310511023@mahasiswa.upnvj.ac.id" data-telp="085767823412" data-mhs="Aktif" data-golongan="5" data-ukt="Rp 6.300.000" data-stat="Penurunan UKT">Detail Mahasiswa</a></td></tr>
+<tr><td>2310511024</td><td>Yusuf Fadhil</td><td>4</td><td>S1 Sistem Informasi</td><td>4</td><td>Rp 5.300.000</td><td>Cicilan UKT</td><td><a href="#" class="detail-link" data-nama="Yusuf Fadhil" data-judul="Detail Mahasiswa" data-nim="2310511024" data-prodi="S1 Sistem Informasi" data-semester="4" data-alamat="Jl. Gajah Mada, Pontianak" data-email="2310511024@mahasiswa.upnvj.ac.id" data-telp="081289764531" data-mhs="Aktif" data-golongan="4" data-ukt="Rp 5.300.000" data-stat="Cicilan UKT">Detail Mahasiswa</a></td></tr>
+<tr><td>2310511025</td><td>Nabila Azahra</td><td>5</td><td>D3 Sistem Informasi</td><td>5</td><td>Rp 5.900.000</td><td>Penurunan UKT</td><td><a href="#" class="detail-link" data-nama="Nabila Azahra" data-judul="Detail Mahasiswa" data-nim="2310511025" data-prodi="D3 Sistem Informasi" data-semester="5" data-alamat="Jl. Teuku Umar, Denpasar" data-email="2310511025@mahasiswa.upnvj.ac.id" data-telp="083823456789" data-mhs="Aktif" data-golongan="5" data-ukt="Rp 5.900.000" data-stat="Penurunan UKT">Detail Mahasiswa</a></td></tr>
+<tr><td>2310511026</td><td>Aditya Pratama</td><td>7</td><td>S1 Informatika</td><td>6</td><td>Rp 7.100.000</td><td>Pemotongan 50%</td><td><a href="#" class="detail-link" data-nama="Aditya Pratama" data-judul="Detail Mahasiswa" data-nim="2310511026" data-prodi="S1 Informatika" data-semester="7" data-alamat="Jl. Sudirman, Pekanbaru" data-email="2310511026@mahasiswa.upnvj.ac.id" data-telp="085312345623" data-mhs="Aktif" data-golongan="6" data-ukt="Rp 7.100.000" data-stat="Pemotongan 50%">Detail Mahasiswa</a></td></tr>
+                    </tbody>
+                </table>
+<div class="pagination" id="pagination">
+  <button id="prevPage">Previous</button>
+  <span id="pageNumbers"></span>
+  <button id="nextPage">Next</button>
+</div>
+
+            </div>
+        </div>
+    </div>
+
+<!-- Pop-Up -->
+<div class="popup-container" id="popup">
+    <div class="popup-content">
+        <span class="close-btn" id="closePopup">&times;</span>
+        <h2 id="popup-title">Detail Mahasiswa</h2>
+        <div class="popup-body">
+            <div class="profile-image">
+                <img id="popup-image" src="" alt="Profile">
+            </div>
+            <div class="details">
+                <div class="detail-item">
+                    <table class="detail-table">
+                        <tbody>
+                            <tr>
+                                <td><strong>NIM</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-nim"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Nama Mahasiswa</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-nama"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Program Studi</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-prodi"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Semester</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-semester"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Alamat</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-alamat"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Email</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-email"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>No. Telepon</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-telp"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Status Mahasiswa</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-mhs"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Golongan UKT</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-golongan"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Total UKT</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-ukt"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Status Bayar</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-stat"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchInput = document.getElementById("searchInput");
+            const filterDropdown = document.getElementById("filterDropdown");
+            const tableRows = document.querySelectorAll("#dataTable tr");
+
+            function filterTable() {
+                const searchValue = searchInput.value.toLowerCase();
+                const filterValue = filterDropdown.value;
+
+                tableRows.forEach((row) => {
+                    const cells = row.querySelectorAll("td");
+                    const programStudi = cells[3].textContent.trim(); // Program Studi (index 3)
+                    const namaMahasiswa = cells[1].textContent.toLowerCase(); // Nama Mahasiswa (index 1)
+
+                    // Periksa kecocokan filter dropdown dan pencarian nama
+                    const matchesFilter = filterValue === "all" || programStudi === filterValue;
+                    const matchesSearch = namaMahasiswa.includes(searchValue);
+
+                    // Tampilkan baris jika sesuai
+                    if (matchesFilter && matchesSearch) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            }
+
+            // Tambahkan event listeners
+            searchInput.addEventListener("input", filterTable);
+            filterDropdown.addEventListener("change", filterTable);
+        });
+    </script>
+
+    <script>
+     document.addEventListener("DOMContentLoaded", function() {
+    const detailLinks = document.querySelectorAll(".detail-link");
+    const popupContainer = document.getElementById("popup");
+    const popupTitle = document.getElementById("popup-title");
+    const popupImage = document.getElementById("popup-image");
+    const popupNama = document.getElementById("popup-nama");
+    const popupNim = document.getElementById("popup-nim");
+    const popupProdi = document.getElementById("popup-prodi");
+    const popupSemester = document.getElementById("popup-semester");
+    const popupAlamat = document.getElementById("popup-alamat");
+    const popupEmail = document.getElementById("popup-email");
+    const popupTelp = document.getElementById("popup-telp");
+    const popupMhs = document.getElementById("popup-mhs");
+    const popupGolongan = document.getElementById("popup-golongan");
+    const popupUkt = document.getElementById("popup-ukt");
+    const popupStat = document.getElementById("popup-stat");
+    const closePopup = document.getElementById("closePopup");
+
+    detailLinks.forEach(link => {
+        link.addEventListener("click", function(event) {
+            event.preventDefault();
+
+            // Ambil data dari atribut
+            const judul = this.getAttribute("data-judul");
+            const nama = this.getAttribute("data-nama");
+            const nim = this.getAttribute("data-nim");
+            const prodi = this.getAttribute("data-prodi");
+            const semester = this.getAttribute("data-semester");
+            const alamat = this.getAttribute("data-alamat");
+            const email = this.getAttribute("data-email");
+            const telp = this.getAttribute("data-telp");
+            const mhs = this.getAttribute("data-mhs");
+            const golongan = this.getAttribute("data-golongan");
+            const ukt = this.getAttribute("data-ukt");
+            const stat = this.getAttribute("data-stat");
+            const foto = this.getAttribute("data-foto");
+
+            //Kalau gak ada foto
+            popupImage.src = foto || "https://via.placeholder.com/80/cccccc/ffffff?text=No+Image";
+
+            // Perbarui isi pop-up
+            popupTitle.textContent = judul;
+            popupImage.src = foto;
+            popupNama.textContent = nama;
+            popupNim.textContent = nim;
+            popupProdi.textContent = prodi;
+            popupSemester.textContent = semester;
+            popupAlamat.textContent = alamat;
+            popupEmail.textContent = email;
+            popupMhs.textContent = mhs;
+            popupTelp.textContent = telp;
+            popupGolongan.textContent = golongan;
+            popupUkt.textContent = ukt;
+            popupStat.textContent = stat;
+
+            // Tampilkan pop-up
+            popupContainer.style.display = "flex";
+        });
+    });
+
+    // Tutup popup
+    closePopup.addEventListener("click", function() {
+        popupContainer.style.display = "none";
+    });
+
+    // Tutup popup saat klik di luar konten
+    popupContainer.addEventListener("click", function(e) {
+        if (e.target === popupContainer) {
+            popupContainer.style.display = "none";
+        }
+    });
+});
+
+    </script>
+
+   <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const rowsPerPage = 10;
+    const table = document.querySelector("#dataTable");
+    const rows = Array.from(table.querySelectorAll("tr"));
+    const pageNumbers = document.getElementById("pageNumbers");
+    const prevBtn = document.getElementById("prevPage");
+    const nextBtn = document.getElementById("nextPage");
+    let currentPage = 1;
+
+    function showPage(page) {
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        rows.forEach((row, index) => {
+            row.style.display = (index >= start && index < end) ? "" : "none";
+        });
+
+        updateButtons(page);
+    }
+
+    function updateButtons(page) {
+        const pageCount = Math.ceil(rows.length / rowsPerPage);
+        pageNumbers.innerHTML = "";
+
+        for (let i = 1; i <= pageCount; i++) {
+            const btn = document.createElement("button");
+            btn.textContent = i;
+            btn.classList.add("page-btn");
+            if (i === page) btn.classList.add("active");
+
+            btn.addEventListener("click", function () {
+                currentPage = i;
+                showPage(currentPage);
+            });
+
+            pageNumbers.appendChild(btn);
+        }
+
+        prevBtn.disabled = (page === 1);
+        nextBtn.disabled = (page === pageCount);
+    }
+
+    prevBtn.addEventListener("click", () => {
+        if (currentPage > 1) {
+            currentPage--;
+            showPage(currentPage);
+        }
+    });
+
+    nextBtn.addEventListener("click", () => {
+        const pageCount = Math.ceil(rows.length / rowsPerPage);
+        if (currentPage < pageCount) {
+            currentPage++;
+            showPage(currentPage);
+        }
+    });
+
+    showPage(currentPage);
+});
+</script>
+
+
+
+    <style>
+        a {
+            text-decoration: none; /* Menghilangkan underline */
+            color: black;
+        }
+    </style>
+</body>
+
+</html>

@@ -282,6 +282,8 @@ table a:hover {
   background: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
+  z-index: 2000;
+  cursor: pointer;
 }
 
 /* Styling untuk pop-up content */
@@ -294,7 +296,7 @@ table a:hover {
   max-width: 1500px; /* Batas maksimum agar tidak terlalu lebar */
   min-width: 500px; /* Lebar minimum */
   width: 700px; /* Sesuai dengan konten */
-  height: 420px;
+  height: 60vh;
   position: relative;
   text-align: left;
 }
@@ -364,36 +366,15 @@ table a:hover {
   text-align: left;
 }
 
-.per-page-dropdown {
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    flex-wrap: wrap;
+.export {
+    margin-left: 1rem;
 }
 
-.page-btn {
-    margin: 0 4px;
+.export button {
     padding: 6px 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    color: #333;
-    background-color: #f9f9f9;
-    text-decoration: none;
-}
-
-.page-btn:hover {
-    background-color: #e0e0e0;
-}
-
-.page-btn.active {
-    font-weight: bold;
-    background-color: #2b7cff;
+    background-color: #004080;
     color: white;
     border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }

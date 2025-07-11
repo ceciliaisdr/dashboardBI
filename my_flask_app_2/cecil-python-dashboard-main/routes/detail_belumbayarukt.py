@@ -13,22 +13,25 @@ USERNAME = "uakademik"
 PASSWORD = "VTUzcjRrNGRlbTFrMjAyNCYh"
 API_SECRET = "Cspwwxq5SyTOMkq8XYcwZ1PMpYrYCwrv"
 
+# === Helper Basic Auth ===
 def basic_auth(username, password):
     token = base64.b64encode(f"{username}:{password}".encode('utf-8')).decode("ascii")
     return f'Basic {token}'
 
+# === Header Lengkap ===
 HEADERS = {
     "X-UPNVJ-API-KEY": API_SECRET,
-    "Accept": 'application/json',
+    "Accept": "application/json",
     "Authorization": basic_auth(USERNAME, PASSWORD),
+    "User-Agent": "Thunder Client (https://www.thunderclient.com)"
 }
 
 # === Global Cache ===
 BELUM_BAYAR_CACHE = None
 BELUM_BAYAR_LAST_FETCH = 0
 CACHE_DURATION_SECONDS = 600  # 10 menit
-
 BIODATA_CACHE = {}  # key: NIM, value: biodata dict
+
 
 @belumbayar_bp.route('/detail-belum-bayar')
 def detail_belum_bayar():
@@ -87,7 +90,10 @@ def detail_belum_bayar():
                     res = requests.post(API_BIODATA_URL, data={"nim": nim}, headers=HEADERS)
                     if res.status_code == 200:
                         bio = res.json().get("data", {})
+                        if not bio:
+                            print(f"[WARN] Biodata kosong untuk NIM {nim}")
                     else:
+                        print(f"[ERROR] Gagal ambil biodata {nim}: status {res.status_code}")
                         bio = {}
                 except Exception as e:
                     print(f"[ERROR] Gagal ambil biodata {nim}: {e}")
@@ -129,4 +135,5 @@ def detail_belum_bayar():
         )
 
     except Exception as e:
+        print(f"[ERROR] {e}")
         return f"Error: {e}", 500

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detail Nilai {{ prodi_name }}</title>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/nilai_sisfo.css') }}" />
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="FIK Logo" />
+      </div>
+      <ul class="menu">
+        <li><a href="/home"><i class="bx bx-menu"></i> Home</a></li>
+        <li><a href="/dekanukt"><i class="bx bx-wallet"></i> UKT</a></li>
+        <li><a href="/dekanstatmhs"><i class="bx bx-user"></i> Status Mahasiswa</a></li>
+        <li><a href="/dekannilai" class="active"><i class="bx bx-pencil"></i> Nilai Mahasiswa</a></li>
+        <li><a href="/dekankrs"><i class="bx bx-file"></i> Pengisian KRS</a></li>
+      </ul>
+    </div>
+
+    <div class="main-content">
+      <header>
+        <h1>Dashboard Nilai - {{ prodi_name }}</h1>
+        <a href="/logout"><i class="bx bx-user-circle profile-icon"></i></a>
+      </header>
+
+      <div class="kembali">
+        <p><i class="bx bx-arrow-back"></i> <a href="/dekannilai">Kembali</a></p>
+      </div>
+
+      <div class="chart-card">
+        <div class="title-section">
+          <h2>Detail Mahasiswa {{ prodi_name }}</h2>
+        </div>
+
+        <div class="isi">
+          <p>Lihat Selengkapnya Mahasiswa {{ prodi_name }} pada button berikut</p>
+          <div class="btn-diagram2">
+            <button class="diagram2btn" onclick="redirectToDetail()">Lihat Detail</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard7">
+        <div class="diagram8">
+          <div class="diagram8-card">
+            <h2>Distribusi Nilai Per Kelas</h2>
+
+            <div class="dropdown-container">
+              <select id="periodeDropdown">
+                {% for tahun in tahun_akademik_list %}
+                  <option value="{{ tahun }}" {% if selected_periode == tahun %}selected{% endif %}>{{ tahun }}</option>
+                {% endfor %}
+              </select>
+
+              <select id="semesterDropdown">
+                {% for sem in semester_list %}
+                  <option value="{{ sem }}" {% if selected_semester == sem %}selected{% endif %}>Semester {{ sem }}</option>
+                {% endfor %}
+              </select>
+
+              <select id="mataKuliahDropdown">
+                </select>
+            </div>
+
+            <div class="chart-wrapper7">
+              <canvas id="nilaiBarChart"></canvas>
+            </div>
+
+            <div class="detail-mahasiswa-perolehan-nilai">
+              <h2>Detail Mahasiswa Perolehan Nilai</h2>
+              <div class="btn-detail-mahasiswa-perolehan-nilai">
+                <button class="diagram2btn" onclick="redirectToDetailPerolehanNilai()">Lihat Detail</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+  <script>
+    // Get prodi_slug from the Flask template context
+    const PRODI_SLUG = "{{ prodi_slug }}"; // Ini penting! Pastikan prodi_slug ada di context Flask
+
+    function redirectToDetail() {
+      // Use PRODI_SLUG to navigate to the correct student list page
+      window.location.href = `/${PRODI_SLUG}/daftar-mahasiswa`;
+    }
+
+    function redirectToDetailPerolehanNilai() {
+      const periode = document.getElementById("periodeDropdown").value;
+      const matkul = document.getElementById("mataKuliahDropdown").value;
+      const semester = document.getElementById("semesterDropdown").value;
+
+      // Pastikan semua filter sudah terpilih sebelum redirect
+      if (!periode || !matkul || !semester || matkul === "Tidak ada mata kuliah") {
+        alert("Pilih Periode, Semester, dan Mata Kuliah terlebih dahulu.");
+        return;
+      }
+
+      // Use PRODI_SLUG for the dynamic route
+      const url = `/${PRODI_SLUG}/detail-perolehan-nilai?periode=${encodeURIComponent(periode)}&matkul=${encodeURIComponent(matkul)}&semester=${encodeURIComponent(semester)}`;
+      window.location.href = url;
+    }
+
+    async function loadMataKuliah() {
+      const periode = document.getElementById("periodeDropdown").value;
+      const semester = document.getElementById("semesterDropdown").value;
+      const mataKuliahDropdown = document.getElementById("mataKuliahDropdown");
+
+      // Bersihkan opsi lama
+      mataKuliahDropdown.innerHTML = ''; 
+
+      if (!periode || !semester) {
+        // Jika periode atau semester belum dipilih, biarkan dropdown mata kuliah kosong
+        // dan hancurkan chart yang ada
+        if (window.nilaiChart) {
+          window.nilaiChart.destroy();
+          window.nilaiChart = null; // Set to null to indicate no chart is active
+        }
+        return; 
+      }
+
+      try {
+        // Use PRODI_SLUG for the API endpoint
+        const res = await fetch(`/api/mata-kuliah-by-filter/${PRODI_SLUG}?tahun=${encodeURIComponent(periode)}&semester=${encodeURIComponent(semester)}`);
+        const mataKuliahList = await res.json();
+
+        if (res.ok) {
+          if (mataKuliahList.error) { // Check for error message from the API
+              console.error("Gagal memuat daftar mata kuliah:", mataKuliahList.error);
+              alert(mataKuliahList.error);
+              // Clear chart on error
+              if (window.nilaiChart) {
+                window.nilaiChart.destroy();
+                window.nilaiChart = null;
+              }
+              return;
+          }
+          
+          if (mataKuliahList.length === 0) {
+              const option = document.createElement("option");
+              option.value = ""; // Value kosong
+              option.textContent = "Tidak ada mata kuliah";
+              mataKuliahDropdown.appendChild(option);
+              // Hancurkan chart jika tidak ada mata kuliah
+              if (window.nilaiChart) {
+                window.nilaiChart.destroy();
+                window.nilaiChart = null;
+              }
+              return;
+          }
+
+          mataKuliahList.forEach(mk => {
+            const option = document.createElement("option");
+            option.value = mk;
+            option.textContent = mk;
+            mataKuliahDropdown.appendChild(option);
+          });
+          
+          // Setelah mata kuliah dimuat, panggil loadChartData
+          loadChartData();
+        } else {
+          console.error("Gagal memuat daftar mata kuliah:", mataKuliahList.error || res.statusText);
+          alert("Gagal memuat daftar mata kuliah.");
+          if (window.nilaiChart) {
+            window.nilaiChart.destroy();
+            window.nilaiChart = null;
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching mata kuliah:", error);
+        alert("Terjadi kesalahan saat memuat mata kuliah.");
+        if (window.nilaiChart) {
+          window.nilaiChart.destroy();
+          window.nilaiChart = null;
+        }
+      }
+    }
+
+    async function loadChartData() {
+      const periode = document.getElementById("periodeDropdown").value;
+      const matkul = document.getElementById("mataKuliahDropdown").value; 
+      const semester = document.getElementById("semesterDropdown").value;
+
+      // Pastikan semua filter sudah terisi sebelum memuat chart
+      if (!periode || !matkul || !semester || matkul === "Tidak ada mata kuliah") {
+        console.log("Filter belum lengkap atau tidak ada mata kuliah, tidak memuat chart.");
+        if (window.nilaiChart) {
+          window.nilaiChart.destroy();
+          window.nilaiChart = null;
+        }
+        return;
+      }
+
+      try {
+        // Use PRODI_SLUG for the API endpoint
+        const res = await fetch(`/api/chart-data-nilai/${PRODI_SLUG}?periode=${encodeURIComponent(periode)}&matkul=${encodeURIComponent(matkul)}&semester=${encodeURIComponent(semester)}`);
+        const data = await res.json();
+
+        if (res.ok) {
+          if (data.error) { 
+              console.error("Gagal memuat data chart:", data.error);
+              alert(data.error);
+              if (window.nilaiChart) {
+                window.nilaiChart.destroy();
+                window.nilaiChart = null;
+              }
+              return;
+          }
+
+          const hurufLabels = ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "E"];
+          const warnaHuruf = {
+            "A": "#4CAF50", "A-": "#8BC34A", "B+": "#FFEB3B", "B": "#FFC107",
+            "B-": "#FF9800", "C+": "#03A9F4", "C": "#2196F3", "C-": "#9C27B0",
+            "D": "#795548", "E": "#F44336"
+          };
+
+          const labelsKelas = data.map(item => item.kelas);
+
+          const datasets = hurufLabels.map(huruf => ({
+            label: huruf,
+            data: data.map(item => item[huruf] || 0),
+            backgroundColor: warnaHuruf[huruf],
+            // borderColor: 'white', // Optional: Border antar bar di stacked chart
+            // borderWidth: 1,      // Optional
+          }));
+
+          const ctx = document.getElementById("nilaiBarChart").getContext("2d");
+          if (window.nilaiChart) window.nilaiChart.destroy();
+
+          window.nilaiChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labelsKelas,
+            datasets: datasets
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              datalabels: {
+                anchor: 'start',
+                align: 'end',
+                color: '#000',
+                formatter: value => value > 0 ? value : '',
+                clamp: true,
+                offset: -2,
+                font: {
+                  weight: 'bold',
+                  size: 10
+                }
+              },
+              title: {
+                display: true,
+                text: 'Distribusi Nilai Huruf Mahasiswa per Kelas'
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                stepSize: 1
+              }
+            }
+          },
+          plugins: [ChartDataLabels]
+        });
+        } else {
+          console.error("Gagal memuat data chart:", data.error || res.statusText);
+          alert("Gagal memuat data chart.");
+          if (window.nilaiChart) {
+            window.nilaiChart.destroy();
+            window.nilaiChart = null;
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching chart data:", error);
+        alert("Terjadi kesalahan saat memuat data chart.");
+        if (window.nilaiChart) {
+          window.nilaiChart.destroy();
+          window.nilaiChart = null;
+        }
+      }
+    }
+
+    // Event listeners
+    document.getElementById("periodeDropdown").addEventListener("change", loadMataKuliah);
+    document.getElementById("semesterDropdown").addEventListener("change", loadMataKuliah);
+    document.getElementById("mataKuliahDropdown").addEventListener("change", loadChartData); 
+
+    // Muat mata kuliah dan chart saat DOMContentLoaded
+    document.addEventListener("DOMContentLoaded", () => {
+      loadMataKuliah(); // Panggil ini pertama kali untuk mengisi mata kuliah
+    });
+  </script>
+
+  <style>
+    /* ... (CSS Anda yang sudah ada) ... */
+    a {
+      text-decoration: none;
+      color: black;
+    }
+
+    /* Tambahan CSS untuk chart jika diperlukan, seperti tinggi wrapper */
+    .chart-wrapper7 {
+        position: relative; /* Penting untuk maintainAspectRatio: false */
+        height: 400px; /* Atur tinggi yang Anda inginkan untuk chart */
+        width: 100%;
+        margin-top: 20px;
+    }
+  </style>
+</body>
+</html>

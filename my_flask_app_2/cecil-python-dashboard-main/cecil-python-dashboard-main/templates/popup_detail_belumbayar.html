@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Mahasiswa</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/detail_popup.css') }}">
+</head>
+<body>
+    <div class="popup-container">
+        <div class="popup-content">
+            <span class="close-btn" onclick="window.close()">&times;</span>
+            <h2>Detail Mahasiswa</h2>
+            <div id="studentDetail">
+                <!-- Detail mahasiswa akan dimuat di sini melalui JavaScript -->
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    // Ambil parameter NIM dari URL
+    const params = new URLSearchParams(window.location.search);
+    const nim = params.get("nim");
+
+    if (nim) {
+        fetch(`/api/mahasiswa/${nim}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Mahasiswa tidak ditemukan");
+                }
+                return response.json();
+            })
+            .then(data => {
+                const detailContainer = document.getElementById("studentDetail");
+                detailContainer.innerHTML = `
+                    <p><strong>NIM:</strong> ${data.nim}</p>
+                    <p><strong>Nama:</strong> ${data.nama}</p>
+                    <p><strong>Semester:</strong> ${data.semester}</p>
+                    <p><strong>Program Studi:</strong> ${data.program_studi}</p>
+                    <p><strong>Golongan UKT:</strong> ${data.gol_ukt}</p>
+                    <p><strong>Total UKT:</strong> ${data.total_ukt}</p>
+                `;
+            })
+            .catch(error => {
+                document.getElementById("studentDetail").innerHTML = `<p style="color: red;">${error.message}</p>`;
+            });
+    } else {
+        document.getElementById("studentDetail").innerHTML = "<p style='color: red;'>Parameter NIM tidak ditemukan.</p>";
+    }
+</script>
+</html>

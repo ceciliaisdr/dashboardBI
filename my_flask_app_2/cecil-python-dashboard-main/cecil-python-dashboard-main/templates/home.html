@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+
+    <style>
+        /* Tambahkan efek fade out untuk transisi */
+        .fade-in {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Ambil elemen-elemen yang mengarahkan ke login
+            const loginLink = document.querySelector("a[href='{{ url_for('login') }}']");
+            const loginButton = document.querySelector(".tbl-login");
+
+            // Fungsi untuk menambahkan kelas animasi dan pindah halaman setelah animasi selesai
+            function transitionToLogin(event) {
+                event.preventDefault(); // Mencegah langsung pindah halaman
+                document.body.classList.add("fade-in"); // Tambahkan kelas untuk animasi
+
+                // Tunggu sampai animasi selesai baru pindah halaman
+                setTimeout(function() {
+                    window.location.href = "{{ url_for('login') }}";
+                }, 500); // 500ms sesuai dengan durasi transisi CSS
+            }
+
+            // Tambahkan event listener untuk klik
+            loginLink.addEventListener("click", transitionToLogin);
+            loginButton.addEventListener("click", transitionToLogin);
+        });
+    </script>
+
+</head>
+<body>
+    <nav>
+        <div class="wrapper">
+            <div class="logo">
+                <a href=''>
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" class="header-logo" alt="Logo Fakultas">
+                </a>
+            </div>
+            <div class="menu">
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#dashboard">Dashboard</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wrapper">
+        <section id="home">
+            <!-- Gambar dan overlay dibungkus dalam container -->
+            <div class="gambarkiri-container">
+                <img src="{{ url_for('static', filename='images/fikkotak.png') }}" class="gambarkiri" alt="Logo Fakultas">
+                <div class="overlay">Fakultas Ilmu Komputer UPN Veteran Jakarta</div>
+            </div>
+            
+            <div class="kolom">
+                <p class="deskripsi">Dashboard Business Intelligence</p>
+                <h4>Lihat Dashboard Fakultas Disini</h4>
+                <p>Silahkan Login Untuk Informasi Lebih Lanjut</p>
+                <p><a href="{{ url_for('login') }}" class="tbl-login">LOGIN</a></p>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

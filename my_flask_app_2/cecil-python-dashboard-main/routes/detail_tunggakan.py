@@ -4,27 +4,27 @@ import os
 import base64
 import requests
 
-
 tunggakan_bp = Blueprint('tunggakan_bp', __name__)
 
-# Konfigurasi API Biodata
+# === Konfigurasi API Biodata ===
 API_BIODATA_URL = 'https://api.upnvj.ac.id/data/get_biodata_mahasiswa'
 USERNAME = "uakademik"
 PASSWORD = "VTUzcjRrNGRlbTFrMjAyNCYh"
-API_KEY = "X-UPNVJ-API-KEY"
 API_SECRET = "Cspwwxq5SyTOMkq8XYcwZ1PMpYrYCwrv"
 
 
+# === Helper Basic Auth ===
 def basic_auth(username, password):
     token = base64.b64encode(f"{username}:{password}".encode('utf-8')).decode("ascii")
     return f'Basic {token}'
 
 
+# === Header Lengkap ===
 HEADERS = {
-    "API_KEY_NAME": API_KEY,
-    "API_KEY_SECRET": API_SECRET,
-    "Accept": 'application/json',
+    "X-UPNVJ-API-KEY": API_SECRET,
+    "Accept": "application/json",
     "Authorization": basic_auth(USERNAME, PASSWORD),
+    "User-Agent": "Thunder Client (https://www.thunderclient.com)"
 }
 
 
@@ -34,7 +34,7 @@ def detail_tunggakan():
         file_path = os.path.join('static', 'Rincian_per_mhs.csv')
         df = pd.read_csv(file_path)
 
-        # Bersihkan dan filter
+        # Bersihkan & filter
         df['Tunggakan'] = df['Tunggakan'].astype(str).str.strip()
         df['Tahun Akademik'] = df['Tahun Akademik'].astype(str).str.strip()
         df['Total Tunggakan'] = df['Total Tunggakan'].astype(str).str.replace(r'[^0-9]', '', regex=True).astype(float)
@@ -65,11 +65,16 @@ def detail_tunggakan():
                 res = requests.post(API_BIODATA_URL, data={"nim": nim}, headers=HEADERS)
                 if res.status_code == 200:
                     bio = res.json().get("data", {})
-                    alamat = f"{bio.get('kelurahan', '')}, {bio.get('kecamatan', '')}, {bio.get('kotakab', '')}, {bio.get('propinsi', '')}"
-                    email = bio.get("email", "-")
-                    telp = bio.get("hp", "-")
+                    if bio:
+                        alamat = f"{bio.get('kelurahan', '')}, {bio.get('kecamatan', '')}, {bio.get('kotakab', '')}, {bio.get('propinsi', '')}".strip(', ')
+                        email = bio.get("email", "-")
+                        telp = bio.get("hp", "-")
+                    else:
+                        print(f"[WARN] Biodata kosong untuk NIM {nim}")
+                else:
+                    print(f"[ERROR] Gagal ambil biodata {nim}: status {res.status_code}")
             except Exception as e:
-                print(f"Error ambil biodata {nim}: {e}")
+                print(f"[ERROR] Gagal ambil biodata {nim}: {e}")
 
             enriched_data.append({
                 'Tahun Akademik': row['Tahun Akademik'],
@@ -78,7 +83,7 @@ def detail_tunggakan():
                 'Program Studi': row['Program Studi'],
                 'Status Akademik': row['Status Akademik'],
                 'Total Tunggakan': int(row['Total Tunggakan']),
-                'Alamat': alamat,
+                'Alamat': alamat if alamat.strip(', ') else "-",
                 'Email': email,
                 'Telp': telp
             })
@@ -110,4 +115,5 @@ def detail_tunggakan():
         )
 
     except Exception as e:
+        print(f"[ERROR] {e}")
         return f"Error: {e}", 500

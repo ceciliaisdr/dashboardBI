@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+   <title>Dashboard Nilai</title>
+   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/dekannilai.css') }}" />
+</head>
+
+<body>
+   <div class="container">
+          <div class="sidebar">
+        <div class="logo">
+          <img src="{{ url_for('static', filename='images/logo.png') }}" alt="FIK Logo" />
+        </div>
+        <ul class="menu">
+          <li><a href="/home"><i class='bx bx-menu'></i> Home</a></li>
+          <li><a href="/dekanukt"><i class='bx bx-wallet'></i> UKT</a></li>
+          <li><a href="/dekanstatmhs"><i class='bx bx-user'></i> Status Mahasiswa</a></li>
+          <li><a href="/dekannilai" class="active"><i class='bx bx-pencil'></i> Nilai Mahasiswa</a></li>
+          <li><a href="/dekankrs"><i class='bx bx-file'></i> Pengisian KRS</a></li>
+        </ul>
+     </div>
+
+          <div class="content">
+        <h1>Selamat Datang di Menu Nilai Mahasiswa</h1>
+
+        <div class="dashboard-menu-container">
+          <h2>Program Studi</h2>
+          <div class="dashboard-menu" id="prodiCardContainer">
+                       </div>
+        </div>
+
+        <div class="dashboard2">
+          <div class="diagram1">
+             <div class="diagram1-card">
+               <h2>Perbandingan IPK Tertinggi, Terendah, dan Rata-Rata IPK</h2>
+
+               <div class="rataipk">
+                  <select id="ipkYearDropdown" class="dropdown-select">
+                    <option value="">Semua Angkatan</option>
+                  </select>
+               </div>
+
+               <div class="chart-wrapper2">
+                  <canvas id="ipkbandingBarChart" width="1500px" height="800px"></canvas>
+               </div>
+             </div>
+          </div>
+        </div>
+     </div>
+   </div>
+
+     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+   <script>
+     let ipkChart;
+
+     async function updateChart(angkatan = "") {
+        const res = await fetch(`/api/ipk-statistik${angkatan ? '?angkatan=' + angkatan : ''}`);
+        const data = await res.json();
+
+        const labels = data.map(d => d.prodi);
+        const ipkMax = data.map(d => d.ipk_max);
+        const ipkAvg = data.map(d => d.ipk_avg);
+        const ipkMin = data.map(d => d.ipk_min);
+
+        const chartData = {
+          labels: labels,
+          datasets: [
+             {
+               label: "IPK Tertinggi",
+               data: ipkMax,
+               backgroundColor: "#28a745"
+             },
+             {
+               label: "IPK Rata-rata",
+               data: ipkAvg,
+               backgroundColor: "#007bff"
+             },
+             {
+               label: "IPK Terendah",
+               data: ipkMin,
+               backgroundColor: "#dc3545"
+             }
+          ]
+        };
+
+        const options = {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+             title: {
+               display: true,
+               text: "Perbandingan IPK Mahasiswa Tiap Program Studi"
+             },
+             legend: { position: "top" },
+             tooltip: { mode: "index", intersect: false },
+             datalabels: {
+               anchor: "end",
+               align: "top",
+               formatter: v => v.toFixed(2)
+             }
+          },
+          scales: {
+             y: {
+               beginAtZero: true,
+               max: 4
+             }
+          }
+        };
+
+        if (ipkChart) {
+          ipkChart.data = chartData;
+          ipkChart.update();
+        } else {
+          const ctx = document.getElementById("ipkbandingBarChart").getContext("2d");
+          ipkChart = new Chart(ctx, {
+             type: "bar",
+             data: chartData,
+             options: options,
+             plugins: [ChartDataLabels]
+          });
+        }
+     }
+
+     document.addEventListener("DOMContentLoaded", async () => {
+        const angkatanSelect = document.getElementById("ipkYearDropdown");
+        const prodiContainer = document.getElementById("prodiCardContainer");
+
+        try {
+          const res = await fetch("/api/dropdown-data");
+          const data = await res.json();
+
+          // Tambah dropdown angkatan
+          data.angkatan.forEach(tahun => {
+             const option = document.createElement("option");
+             option.value = tahun;
+             option.textContent = tahun;
+             angkatanSelect.appendChild(option);
+          });
+
+          // Tambah card prodi
+          data.prodi.forEach(prodi => {
+             // MODIFIED SLUG GENERATION: Only replace spaces with hyphens and remove non-word/non-hyphen chars, preserve casing
+             const slug = prodi.replace(/\s+/g, '-').replace(/[^\w-]/g, ''); 
+             const card = document.createElement("a");
+             card.href = `/${slug}`;
+             card.classList.add("no-underline");
+             card.innerHTML = `
+               <div class="card">
+                  <div class="card-content">
+                    <h3>${prodi}</h3>
+                    <p>Lihat informasi lebih lanjut ></p>
+                  </div>
+               </div>
+             `;
+             prodiContainer.appendChild(card);
+          });
+
+          // Load chart awal
+          updateChart();
+        } catch (err) {
+          console.error("Gagal ambil data:", err);
+        }
+
+        angkatanSelect.addEventListener("change", () => {
+          updateChart(angkatanSelect.value);
+        });
+     });
+   </script>
+
+   <style>
+     a { text-decoration: none; color: black; }
+     a:hover { text-decoration: none; }
+   </style>
+</body>
+</html>

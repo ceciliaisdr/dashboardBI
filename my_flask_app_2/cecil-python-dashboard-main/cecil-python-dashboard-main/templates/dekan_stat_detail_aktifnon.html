@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Mahasiswa Non Aktif</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dekan_stat_detail_aktifnon.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="FIK Logo">
+            </div>
+            <ul class="menu">
+                <li><a href="/home"><i class='bx bx-menu'></i> Home</a></li>
+                <li><a href="/dekanukt"><i class='bx bx-wallet'></i> UKT</a></li>
+                <li><a href="/dekanstatmhs" class="active"><i class='bx bx-user'></i> Status Mahasiswa</a></li>
+                <li><a href="/dekannilai"><i class='bx bx-pencil'></i> Nilai Mahasiswa</a></li>
+                <li><a href="/dekankrs"><i class='bx bx-file'></i> Pengisian KRS</a></li>
+                <!-- <li><a href="/help"><i class='bx bx-help-circle'></i> Help</a></li> -->
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header>
+                <h1>Dashboard Status Mahasiswa - Daftar Mahasiswa Aktif dan Non Aktif</h1>
+                <a href="/logout"><i class='bx bx-user-circle profile-icon'></i></a>
+            </header>
+
+            <div class="kembali">
+                <p>
+                    <i class='bx bx-arrow-back'></i>
+                    <a href="/dekanstatmhs">Kembali</a>
+                </p>
+            </div>
+
+            <div class="search-filter-container">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Cari nama mahasiswa...">
+                </div>
+
+                <div class="export">
+                    <button id="exportPdfBtn">Export as PDF</button>
+                </div>
+
+                <div class="filter">
+                    <div class="dropdown">
+                        <select id="statusDropdown">
+                            <option value="all">Status Mahasiswa</option>
+                            <option value="AKTIF">AKTIF</option>
+                            <option value="NON-AKTIF">NON-AKTIF</option>
+                        </select>
+                        <i class='bx bx-chevron-down'></i>
+                    </div>
+                </div>
+
+                <div class="filter">
+                    <div class="dropdown">
+                        <select id="angkatanDropdown">
+                            <option value="all">Angkatan</option>
+                        </select>
+                        <i class='bx bx-chevron-down'></i>
+                    </div>
+                </div>
+
+                <div class="filter">
+                    <div class="dropdown">
+                        <select id="filterDropdown">
+                            <option value="all">Program Studi</option>
+                            <option value="S1 Sistem Informasi">S1 Sistem Informasi</option>
+                            <option value="S1 Informatika">S1 Informatika</option>
+                            <option value="DIII Sistem Informasi">D3 Sistem Informasi</option>
+                        </select>
+                        <i class='bx bx-chevron-down'></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                <thead>
+                    <tr>
+                        <th>NIM</th>
+                        <th>Nama Mahasiswa</th>
+                        <th>Program Studi</th>
+                        <th>IPK</th>
+                        <th>Status Mahasiswa</th>
+                        <th>Detail Mahasiswa</th>
+                    </tr>
+                </thead>
+                    <tbody id="dataTable">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+<!-- Pop-Up -->
+<div class="popup-container" id="popup">
+    <div class="popup-content">
+        <span class="close-btn" id="closePopup">&times;</span>
+        <h2 id="popup-title">Detail Mahasiswa</h2>
+        <div class="popup-body">
+            <div class="profile-image">
+                <img id="popup-image" src="" alt="Profile">
+            </div>
+            
+             <div class="details">
+                <div class="detail-item">
+                    <table class="detail-table">
+                        <tbody>
+                            <tr>
+                                <td><strong>NIM</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-nim"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Nama Mahasiswa</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-nama"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Program Studi</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-prodi"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Semester</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-semester"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>IPK</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-ipk"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Alamat</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-alamat"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Email</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-email"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>No. Telepon</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-telp"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Status Mahasiswa</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-mhs"></span></td>
+                            </tr>
+
+                            <!-- <tr>
+                                <td><strong>Periode</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-periode"></span></td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Scripts -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        window.jsPDF = window.jspdf.jsPDF;
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let allRows = []; // Simpan semua row di sini supaya bisa difilter
+            const searchInput = document.getElementById("searchInput");
+            const filterDropdown = document.getElementById("filterDropdown");
+            const dataTable = document.getElementById("dataTable");
+            const angkatanDropdown = document.getElementById("angkatanDropdown");
+            const statusDropdown = document.getElementById("statusDropdown");
+            const exportPdfBtn = document.getElementById("exportPdfBtn");
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const statusParam = urlParams.get("status");
+            if (statusParam) {
+                statusDropdown.value = statusParam;
+                // langsung filter data berdasarkan status dari URL
+                filterTable();
+            }
+
+            exportPdfBtn.addEventListener("click", () => {
+    const selectedStatus = statusDropdown.value;
+    const selectedAngkatan = angkatanDropdown.value;
+    const selectedProdi = filterDropdown.value;
+
+    const statusText = selectedStatus === "all" ? "semua status" : selectedStatus.toLowerCase();
+    const prodiText = selectedProdi === "all" ? "semua program studi" : selectedProdi;
+    const angkatanText = selectedAngkatan === "all" ? "semua angkatan" : "angkatan " + selectedAngkatan;
+
+    const judul = document.createElement("h2");
+    judul.textContent = `Mahasiswa ${statusText} ${prodiText} ${angkatanText}`;
+    judul.style.fontSize = "16px";
+    judul.style.marginBottom = "10px";
+
+    // Clone tabel dan hilangkan kolom terakhir (Detail Mahasiswa)
+    const originalTable = document.querySelector(".table-container table");
+    const clonedTable = originalTable.cloneNode(true);
+
+    // Hapus kolom ke-6 dari thead
+    const theadRow = clonedTable.querySelector("thead tr");
+    if (theadRow.children.length >= 6) {
+        theadRow.removeChild(theadRow.children[5]);
+    }
+
+    // Hapus kolom ke-6 dari semua tbody row
+    clonedTable.querySelectorAll("tbody tr").forEach(row => {
+        if (row.children.length >= 6) {
+            row.removeChild(row.children[5]);
+        }
+    });
+
+    // Tempel ke container sementara
+    const tempContainer = document.createElement("div");
+    tempContainer.style.padding = "20px";
+    tempContainer.style.backgroundColor = "white";
+    tempContainer.style.color = "black";
+    tempContainer.appendChild(judul);
+    tempContainer.appendChild(clonedTable);
+
+    document.body.appendChild(tempContainer); // TEMPORARY DOM
+
+    html2canvas(tempContainer).then(canvas => {
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF('l', 'mm', 'a4');
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+        pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight);
+        pdf.save("mahasiswa_aktif_nonaktif.pdf");
+
+        document.body.removeChild(tempContainer); // CLEAN UP
+    });
+});
+
+
+            function renderTable(data) {
+            dataTable.innerHTML = "";
+
+            data.forEach(mhs => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${mhs.nim}</td>
+                    <td>${mhs.nama_mahasiswa}</td>
+                    <td>${mhs.nama_program_studi}</td>
+                    <td>${mhs.ipk || '-'}</td>
+                    <td>${mhs.status_mahasiswa_terakhir}</td>
+                    <td>
+                        <a href="#" class="detail-link"
+                            data-nama="${mhs.nama_mahasiswa}"
+                            data-nim="${mhs.nim}"
+                            data-prodi="${mhs.nama_program_studi}"
+                            data-semester="${mhs.semester}"
+                            data-ipk="${mhs.ipk || '-'}"
+                            data-alamat="${mhs.alamat}" 
+                            data-email="${mhs.email}" 
+                            data-telp="${mhs.nomor_telepon}" 
+                            data-mhs="${mhs.status_mahasiswa_terakhir}">
+                            Detail Mahasiswa
+                        </a>
+                    </td>
+                `;
+                dataTable.appendChild(row);
+            });
+
+            bindDetailLinks();
+        }
+    
+            function filterTable() {
+                const searchValue = searchInput.value.toLowerCase();
+                const filterProdi = filterDropdown.value;
+                const filterAngkatan = angkatanDropdown.value;
+                const filterStatus = statusDropdown.value;
+
+                const filteredData = allRows.filter(mhs => {
+                    const matchesSearch =
+                        mhs.nama_mahasiswa.toLowerCase().includes(searchValue) ||
+                        mhs.nim.toLowerCase().includes(searchValue);
+
+                    const matchesProdi = filterProdi === "all" || mhs.nama_program_studi === filterProdi;
+
+                    let angkatanVal = mhs.angkatan;
+                    if (!angkatanVal && mhs.nim && mhs.nim.length >= 2) {
+                        angkatanVal = "20" + mhs.nim.slice(0, 2);
+                    }
+                    const matchesAngkatan = filterAngkatan === "all" || angkatanVal === filterAngkatan;
+
+                    const statusVal = mhs.status_mahasiswa_terakhir?.toUpperCase() || "";
+                    const matchesStatus = filterStatus === "all" || statusVal === filterStatus;
+
+                    return matchesSearch && matchesProdi && matchesAngkatan && matchesStatus;
+                });
+
+                renderTable(filteredData);
+            }
+    
+            function populateAngkatanDropdown(data) {
+            const angkatanSet = new Set();
+            data.forEach(mhs => {
+                let angkatan = mhs.angkatan;
+                if (!angkatan && mhs.nim && mhs.nim.length >= 2) {
+                    angkatan = "20" + mhs.nim.slice(0, 2);
+                }
+                if (angkatan) angkatanSet.add(angkatan);
+            });
+
+            const sortedAngkatan = Array.from(angkatanSet).sort();
+            sortedAngkatan.forEach(angkatan => {
+                const option = document.createElement("option");
+                option.value = angkatan;
+                option.textContent = angkatan;
+                angkatanDropdown.appendChild(option);
+            });
+        }
+
+            fetch('/api/mahasiswa-aktif-nonaktif')
+                .then(response => response.json())
+                .then(data => {
+                    allRows = data;
+                    renderTable(allRows);
+                    populateAngkatanDropdown(allRows);  // Tambahkan ini
+                    searchInput.addEventListener("input", filterTable);
+                    filterDropdown.addEventListener("change", filterTable);
+                    statusDropdown.addEventListener("change", filterTable);
+                    angkatanDropdown.addEventListener("change", filterTable);
+                })
+                .catch(error => console.error('Error fetching mahasiswa:', error));
+    
+            function bindDetailLinks() {
+                const detailLinks = document.querySelectorAll(".detail-link");
+                const popupContainer = document.getElementById("popup");
+                const popupTitle = document.getElementById("popup-title");
+                const popupImage = document.getElementById("popup-image");
+                const popupNama = document.getElementById("popup-nama");
+                const popupNim = document.getElementById("popup-nim");
+                const popupProdi = document.getElementById("popup-prodi");
+                const popupSemester = document.getElementById("popup-semester");
+                const popupIpk = document.getElementById("popup-ipk");
+                const popupAlamat = document.getElementById("popup-alamat");
+                const popupEmail = document.getElementById("popup-email");
+                const popupTelp = document.getElementById("popup-telp");
+                const popupMhs = document.getElementById("popup-mhs");
+                // const popupPeriode = document.getElementById("popup-periode");
+                const closePopup = document.getElementById("closePopup");
+    
+                detailLinks.forEach(link => {
+                    link.addEventListener("click", function(event) {
+                        event.preventDefault();
+    
+                        const judul = "Detail Mahasiswa";
+                        popupTitle.textContent = judul;
+                        popupImage.src = "https://via.placeholder.com/80/cccccc/ffffff?text=No+Image";
+                        popupNama.textContent = this.dataset.nama;
+                        popupNim.textContent = this.dataset.nim;
+                        popupProdi.textContent = this.dataset.prodi;
+                        popupSemester.textContent = this.dataset.semester;
+                        popupIpk.textContent = this.dataset.ipk;
+                        popupAlamat.textContent = this.dataset.alamat;
+                        popupEmail.textContent = this.dataset.email;
+                        popupTelp.textContent = this.dataset.telp;
+                        popupMhs.textContent = this.dataset.mhs;
+                        // popupPeriode.textContent = this.dataset.periode;
+    
+                        popupContainer.style.display = "flex";
+                    });
+                });
+    
+                closePopup.addEventListener("click", function() {
+                    popupContainer.style.display = "none";
+                });
+    
+                popupContainer.addEventListener("click", function(e) {
+                    if (e.target === popupContainer) {
+                        popupContainer.style.display = "none";
+                    }
+                });
+            }
+        });
+    </script>
+    
+
+    <style>
+        a {
+            text-decoration: none; /* Menghilangkan underline */
+            color: black;
+        }
+    </style>
+</body>
+
+</html>

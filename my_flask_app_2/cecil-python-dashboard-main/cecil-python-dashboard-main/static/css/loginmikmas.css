@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: url('/static/images/whitebg.jpg') no-repeat;
+}
+
+/* Wrapper untuk memposisikan sidebar dan konten utama */
+.wrapper {
+    display: flex;
+    /* margin: auto; */
+    justify-content: flex-start;  /* Posisikan konten utama di sebelah kanan */
+    padding-left: 25px; /* Sesuaikan dengan lebar sidebar */
+    width: calc(100% - 20px); /* Menyesuaikan lebar berdasarkan sidebar */
+    align-items: flex-start; /* Pastikan konten dimulai dari atas */
+}
+
+/* Logo khusus untuk header */
+.header-logo {
+    max-width: 250px;  /* Sesuaikan ukuran yang diinginkan */
+    height: auto;     /* Agar logo tetap proporsional */
+    margin-right: 20px;
+    margin-top: 10px;    /* Agar sejajar dengan menu */
+    margin-bottom: 0;
+    margin-left: 20px;
+}
+
+.wrapper i {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: #33372C;
+    font-size: 30px;
+}
+
+/* Navbar */
+nav {
+    width: 100%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    line-height: 80px;
+    padding: 10px 0;
+    position: sticky;
+    top: 0;
+    background-color: #f2e5d9;
+    z-index: 1000;
+    border-bottom: 0.2px gray;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+nav ul li {
+    margin-left: 10px;
+}
+
+nav ul li a {
+    color: #33372C;
+    font-weight: bold;
+    text-align: center;
+    padding: 0px 20px;
+    text-decoration: none;
+    position: relative;
+    cursor: pointer;
+    transition: color 0.25s;
+}
+
+nav ul li a::after {
+    position: absolute;
+    content: "";
+    inset: 0;
+    background: #557C56;
+    scale: 1 0;
+    z-index: -1;
+    transition: 0.45s;
+    border-radius: 10px;
+    color: #f2e5d9;
+}
+
+nav ul li a:hover {
+    color: #f2e5d9;
+}
+
+a:hover::after {
+    scale: 1 1;
+}
+
+/* Main Content */
+main {
+    flex: 1;
+    padding: 20px;
+    margin-top: 0px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.summary {
+    margin-bottom: 30px;
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Pastikan box summary mengambil seluruh lebar main */
+}
+
+h2 {
+    margin-bottom: 10px;
+    color: #33372C;
+}
+
+h3 {
+    margin-top: 20px;
+    color: #33372C;
+}
+
+.highlight {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.action-button {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background 0.3s ease;
+}
+
+.action-button:hover {
+    background: #218838;
+}
+
+/* Footer */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 260;
+    right: 0;
+    text-align: center;
+    background: #007bff;
+    color: #fff;
+    /* border-radius: 0 0 8px 8px; */
+    padding-left: 260px; /* Sesuaikan dengan lebar sidebar */
+    width: calc(100% - 260px); /* Menyesuaikan lebar berdasarkan sidebar */
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    width: 260px;
+    height: calc(100%);
+    background: #557C56;
+    overflow-y: auto; /* Pastikan sidebar dapat di-scroll jika konten terlalu banyak */
+}
+
+.sidebar ul {
+    margin-top: 20px;
+    padding: 0;
+}
+
+.sidebar ul li {
+    width: 100%;
+    list-style: none;
+}
+
+.sidebar ul li a {
+    width: 100%;
+    text-decoration: none;
+    color: azure;
+    height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar ul li a i {
+    min-width: 60px;
+    font-size: 24px;
+    text-align: center;
+}
+/* main section */
+.kartu {
+    position: absolute;
+    top: 60px;
+    width: calc(100% - 260px); /* Perbaikan pada perhitungan width */
+    left: 260px;
+    min-height: calc(100vh - 60px); /* Ganti 1000vh ke 100vh agar tinggi mengikuti viewport */
+}
+
+.cards {
+    width: 100%;
+    padding: 35px 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Ganti menjadi 3 kolom agar 3 kotak sejajar */
+    grid-gap: 20px;
+}
+
+.cards .card {
+    padding: 20px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 7px 25px 0 rgba(0, 0, 0, 0.1);
+}
+
+.icon-box i {
+    font-size: 30px; /* Sesuaikan ukuran icon sesuai keinginan */
+    color: #33372C;  /* Sesuaikan warna icon sesuai keinginan */
+}

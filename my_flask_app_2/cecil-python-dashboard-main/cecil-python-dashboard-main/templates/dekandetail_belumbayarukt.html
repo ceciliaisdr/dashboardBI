@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Mahasiswa Belum Bayar</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dekan_detail_uktbelumbayar.css') }}">
+</head>
+
+<!-- <div id="global-loading" style="
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    flex-direction: column;
+">
+    <div class="spinner"></div>
+    <p style="margin-top: 10px; font-weight: bold;">Memuat data mahasiswa...</p>
+</div> -->
+
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="FIK Logo">
+            </div>
+            <ul class="menu">
+                <li><a href="/home"><i class='bx bx-menu'></i> Home</a></li>
+                <li><a href="/dekanukt" class="active"><i class='bx bx-wallet'></i> UKT</a></li>
+                <li><a href="/dekanstatmhs"><i class='bx bx-user'></i> Status Mahasiswa</a></li>
+                <li><a href="/dekannilai"><i class='bx bx-pencil'></i> Nilai Mahasiswa</a></li>
+                <li><a href="/dekankrs"><i class='bx bx-file'></i> Pengisian KRS</a></li>
+                <!-- <li><a href="/help"><i class='bx bx-help-circle'></i> Help</a></li> -->
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header>
+                <h1>Dashboard UKT - Daftar Mahasiswa Belum Bayar UKT</h1>
+                <a href="/logout"><i class='bx bx-user-circle profile-icon'></i></a>
+            </header>
+
+            <div class="kembali">
+                <p>
+                    <i class='bx bx-arrow-back'></i>
+                    <a href="/dekanukt">Kembali</a>
+                </p>
+            </div>
+
+            <div class="search-filter-container">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Cari nama mahasiswa...">
+                </div>
+
+                <div class="export-button-container" style="margin: 20px 0;">
+                    <button id="exportPdfBtn" class="export-btn">
+                    <i class='bx bx-download'></i> Export as PDF
+                    </button>
+                </div>
+
+                <div class="filter">
+                    <div class="dropdown">
+                        <select id="tahunDropdown">
+                            <option value="all">Tahun Akademik</option>
+                            {% for tahun in tahun_list %}
+                            <option value="{{ tahun }}">{{ tahun }}</option>
+                            {% endfor %}
+                        </select>
+                        <i class='bx bx-chevron-down'></i>
+                    </div>
+                </div>
+
+
+                <div class="filter">
+                    <div class="dropdown">
+                        <select id="filterDropdown">
+                            <option value="all">Program Studi</option>
+                            <option value="S1 Sistem Informasi">S1 Sistem Informasi</option>
+                            <option value="S1 Informatika">S1 Informatika</option>
+                            <option value="DIII Sistem Informasi">D3 Sistem Informasi</option>
+                        </select>
+                        <i class='bx bx-chevron-down'></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tahun Akademik</th>
+                            <th>NIM</th>
+                            <th>Nama Mahasiswa</th>
+                            <!-- <th>Semester</th> -->
+                            <th>Program Studi</th>
+                            <th>Status Akademik</th>
+                            <!-- <th>Gol. UKT</th>
+                            <th>Tarif UKT</th> -->
+                            <th>Total Tunggakan</th>
+                            <th>Detail Mahasiswa</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTable">
+                        {% for row in data %}
+                            <tr data-tahun="{{ row['Tahun Akademik'] }}">
+                            <td>{{ row['Tahun Akademik'] }}</td>
+                            <td>{{ row['NIM'] }}</td>
+                            <td>{{ row['Nama'] }}</td>
+                            <td>{{ row['Program Studi'] }}</td>
+                            <td>{{ row['Status Akademik'] }}</td>
+                            <td>Rp {{ row['Total Tunggakan'] }}</td>
+                            <td>
+                                <a href="#" class="detail-link"
+                            data-nama="{{ row['Nama'] }}"
+                            data-judul="Detail Mahasiswa"
+                            data-nim="{{ row['NIM'] }}"
+                            data-prodi="{{ row['Program Studi'] }}"
+                            data-alamat="{{ row['Alamat'] }}"
+                            data-email="{{ row['Email'] }}"
+                            data-telp="{{ row['Telp'] }}"
+                            data-mhs="{{ row['Status Akademik'] }}"
+                            data-ukt="Rp {{ "{:,}".format(row['Total Tunggakan']) }}"
+                            data-stat="Belum Bayar">
+                            Detail Mahasiswa
+                            </a>
+
+                            </td>
+                            </tr>
+                            {% endfor %}
+                        <!-- <tr>
+                            <td>2110512013</td>
+                            <td>Divasya Valentiaji</td>
+                            <td>7</td>
+                            <td>S1 Sistem Informasi</td>
+                            <td>6</td>
+                            <td>Rp 7.100.000</td>
+                            <td>Rp 23.000.000</td>
+                            <td><a href="#" class="detail-link" 
+                                data-nama="Divasya Valentiaji"
+                                data-judul="Detail Mahasiswa"
+                                data-nim="2110512013" 
+                                data-prodi="S1 Sistem Informasi"
+                                data-semester="7"
+                                data-alamat="Jalan Kenangan Indah Blok QQ1, Pasar Selasa"
+                                data-email="2110512013@mahasiswa.upnvj.ac.id"
+                                data-telp="089572761098"
+                                data-mhs="Tidak Aktif" 
+                                data-golongan="6" 
+                                data-ukt="Rp 7.100.000"
+                                data-stat="-">
+                                Detail Mahasiswa</a>
+                         </td>
+                        </tr>
+                        <tr>
+                            <td>2210511037</td>
+                            <td>Cecilia Isadora Hutagalung</td>
+                            <td>5</td>
+                            <td>S1 Informatika</td>
+                            <td>7</td>
+                            <td>Rp 8.100.000</td>
+                            <td>Rp 10.000.000</td>
+                            <td><a href="#" class="detail-link" 
+                                data-nama="Cecilia Isadora Hutagalung"
+                                data-judul="Detail Mahasiswa"
+                                data-nim="2210511037" 
+                                data-prodi="S1 Informatika"
+                                data-semester="5"
+                                data-alamat="Jalan Aku mau turu Tuhan Blok P15"
+                                data-email="22210511037@mahasiswa.upnvj.ac.id"
+                                data-telp="082222222222"
+                                data-mhs="Aktif" 
+                                data-golongan="7" 
+                                data-ukt="Rp 8.100.000"
+                                data-stat="Cicilan UKT">
+                                Detail Mahasiswa</a>
+                         </td>
+                        </tr>
+                        <tr>
+                            <td>2310510141</td>
+                            <td>Natasha Azzahra Azis</td>
+                            <td>3</td>
+                            <td>D3 Sistem Informasi</td>
+                            <td>4</td>
+                            <td>Rp 4.100.000</td>
+                            <td>Rp 10.000.000</td>
+                            <td><a href="#" class="detail-link" 
+                                data-nama="Natasha Azzahra Azis"
+                                data-judul="Detail Mahasiswa"
+                                data-nim="2310510141" 
+                                data-prodi="D3 Sistem Informasi"
+                                data-semester="3"
+                                data-alamat="Halo Halo Bandung"
+                                data-email="2310510141@mahasiswa.upnvj.ac.id"
+                                data-telp="0811111111111"
+                                data-mhs="Aktif" 
+                                data-golongan="4" 
+                                data-ukt="Rp 4.100.000"
+                                data-stat="Belum Bayar">
+                                Detail Mahasiswa</a>
+                         </td>
+                        </tr>
+                        <tr>
+                            <td>23105110050</td>
+                            <td>Siti Khodijah</td>
+                            <td>3</td>
+                            <td>S1 Sistem Informasi</td>
+                            <td>5</td>
+                            <td>Rp 5.100.000</td>
+                            <td>Rp 8.000.000</td>
+                            <td><a href="#" class="detail-link" 
+                                data-nama="Siti Khodijah"
+                                data-judul="Detail Mahasiswa"
+                                data-nim="23105110050" 
+                                data-prodi="S1 Informatika"
+                                data-semester="3"
+                                data-alamat="Kavling Nemo Nemo"
+                                data-email="23105110050@mahasiswa.upnvj.ac.id"
+                                data-telp="08981717171"
+                                data-mhs="Tidak Aktif" 
+                                data-golongan="5" 
+                                data-ukt="Rp 5.100.000"
+                                data-stat="Belum Bayar">
+                                Detail Mahasiswa</a>
+                         </td>
+                        </tr> -->
+                    </tbody>
+                </table>
+            </div>
+       <div class="pagination-container" style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+    <form method="get" action="{{ url_for('belumbayar_bp.detail_belum_bayar') }}">
+        <label for="per_page">Tampilkan</label>
+        <select name="per_page" onchange="this.form.submit()">
+            <option value="10" {% if per_page == 10 %}selected{% endif %}>10</option>
+            <option value="15" {% if per_page == 15 %}selected{% endif %}>15</option>
+            <option value="25" {% if per_page == 25 %}selected{% endif %}>25</option>
+            <option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+        </select>
+        dari {{ total_data }} data
+        <input type="hidden" name="page" value="{{ page }}">
+    </form>
+
+    <div class="pagination">
+        {% if page > 1 %}
+            <a href="{{ url_for('belumbayar_bp.detail_belum_bayar', page=page-1, per_page=per_page) }}" class="page-btn">Previous</a>
+        {% endif %}
+
+        {% for p in range(1, total_pages + 1) %}
+            {% if p == page %}
+                <span class="page-btn active">{{ p }}</span>
+            {% else %}
+                <a href="{{ url_for('belumbayar_bp.detail_belum_bayar', page=p, per_page=per_page) }}" class="page-btn">{{ p }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page < total_pages %}
+            <a href="{{ url_for('belumbayar_bp.detail_belum_bayar', page=page+1, per_page=per_page) }}" class="page-btn">Next</a>
+        {% endif %}
+    </div>
+</div>
+
+
+        </div>
+    </div>
+
+<!-- Pop-Up -->
+<div class="popup-container" id="popup">
+    <div class="popup-content">
+        <span class="close-btn" id="closePopup">&times;</span>
+        <h2 id="popup-title">Detail Mahasiswa</h2>
+        <div class="popup-body">
+            
+            <div class="profile-image">
+                <img id="popup-image" src="" alt="Profile">
+            </div>
+
+            <div class="details">
+                <div class="detail-item">
+                    <table class="detail-table">
+                        <tbody>
+                            <tr>
+                                <td><strong>NIM</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-nim"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Nama Mahasiswa</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-nama"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Program Studi</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-prodi"></span></td>
+                            </tr>
+
+                            <!-- <tr>
+                                <td><strong>Semester</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-semester"></span></td>
+                            </tr> -->
+
+                            <tr>
+                                <td><strong>Alamat</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-alamat"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Email</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-email"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>No. Telepon</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-telp"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Status Mahasiswa</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-mhs"></span></td>
+                            </tr>
+
+                            <!-- <tr>
+                                <td><strong>Golongan UKT</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-golongan"></span></td>
+                            </tr> -->
+
+                            <tr>
+                                <td><strong>Total UKT</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-ukt"></span></td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>Status Bayar</strong></td>
+                                <td>:</td>
+                                <td><span id="popup-stat"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+        </div>
+    </div>
+</div>
+
+    <!-- Scripts -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+     <script>
+        window.jsPDF = window.jspdf.jsPDF;
+    </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const exportPdfBtn = document.getElementById("exportPdfBtn");
+    const tahunDropdown = document.getElementById("tahunDropdown");
+    const filterDropdown = document.getElementById("filterDropdown");
+
+    exportPdfBtn.addEventListener("click", () => {
+        const selectedTahun = tahunDropdown.value;
+        const selectedProdi = filterDropdown.value;
+
+        const tahunText = selectedTahun === "all" ? "semua tahun akademik" : selectedTahun;
+        const prodiText = selectedProdi === "all" ? "semua program studi" : selectedProdi;
+
+        const judul = document.createElement("h2");
+        judul.textContent = `Daftar Mahasiswa Belum Bayar UKT - ${prodiText}, ${tahunText}`;
+        judul.style.fontSize = "16px";
+        judul.style.marginBottom = "10px";
+
+        // Clone table
+        const originalTable = document.querySelector(".table-container table");
+        const clonedTable = originalTable.cloneNode(true);
+
+        // Remove kolom 'Detail Mahasiswa' (kolom ke-7)
+        const theadRow = clonedTable.querySelector("thead tr");
+        if (theadRow.children.length >= 8) {
+            theadRow.removeChild(theadRow.children[7]);
+        }
+
+        clonedTable.querySelectorAll("tbody tr").forEach(row => {
+            if (row.children.length >= 8) {
+                row.removeChild(row.children[7]);
+            }
+        });
+
+        // Buat container sementara
+        const tempContainer = document.createElement("div");
+        tempContainer.style.padding = "20px";
+        tempContainer.style.backgroundColor = "white";
+        tempContainer.style.color = "black";
+        tempContainer.appendChild(judul);
+        tempContainer.appendChild(clonedTable);
+
+        document.body.appendChild(tempContainer);
+
+        html2canvas(tempContainer).then(canvas => {
+            const imgData = canvas.toDataURL("image/png");
+            const pdf = new jsPDF('l', 'mm', 'a4');
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+            pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight);
+            pdf.save("mahasiswa_belum_bayar_ukt.pdf");
+
+            document.body.removeChild(tempContainer); // Bersihkan
+        });
+    });
+});
+</script>
+
+
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchInput");
+    const filterDropdown = document.getElementById("filterDropdown");
+    const tahunDropdown = document.getElementById("tahunDropdown");
+    const rows = document.querySelectorAll("#dataTable tr");
+
+    function applyAllFilters() {
+    const searchValue = searchInput.value.toLowerCase();
+    const selectedProdi = filterDropdown.value;
+    const selectedTahun = tahunDropdown.value;
+
+    rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        const tahunAttr = row.getAttribute("data-tahun");
+        const nim = cells[1].textContent.toLowerCase();   // Kolom NIM
+        const nama = cells[2].textContent.toLowerCase();  // Kolom Nama Mahasiswa
+        const prodi = cells[3].textContent.trim();        // Program Studi
+
+        const matchesTahun = selectedTahun === "all" || tahunAttr === selectedTahun;
+        const matchesProdi = selectedProdi === "all" || prodi === selectedProdi;
+        const matchesSearch = nama.includes(searchValue) || nim.includes(searchValue);
+
+        // Tampilkan hanya jika semua syarat terpenuhi
+        if (matchesTahun && matchesProdi && matchesSearch) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+}
+
+    // Event listener
+    searchInput.addEventListener("input", applyAllFilters);
+    filterDropdown.addEventListener("change", applyAllFilters);
+    tahunDropdown.addEventListener("change", applyAllFilters);
+});
+</script>
+
+    <script>
+     document.addEventListener("DOMContentLoaded", function() {
+    const detailLinks = document.querySelectorAll(".detail-link");
+    const popupContainer = document.getElementById("popup");
+    const popupTitle = document.getElementById("popup-title");
+    const popupImage = document.getElementById("popup-image");
+    const popupNama = document.getElementById("popup-nama");
+    const popupNim = document.getElementById("popup-nim");
+    const popupProdi = document.getElementById("popup-prodi");
+    // const popupSemester = document.getElementById("popup-semester");
+    const popupAlamat = document.getElementById("popup-alamat");
+    const popupEmail = document.getElementById("popup-email");
+    const popupTelp = document.getElementById("popup-telp");
+    const popupMhs = document.getElementById("popup-mhs");
+    // const popupGolongan = document.getElementById("popup-golongan");
+    const popupUkt = document.getElementById("popup-ukt");
+    const popupStat = document.getElementById("popup-stat");
+    const closePopup = document.getElementById("closePopup");
+
+    detailLinks.forEach(link => {
+        link.addEventListener("click", function(event) {
+            event.preventDefault();
+
+            // Ambil data dari atribut
+            const judul = this.getAttribute("data-judul");
+            const nama = this.getAttribute("data-nama");
+            const nim = this.getAttribute("data-nim");
+            const prodi = this.getAttribute("data-prodi");
+            // const semester = this.getAttribute("data-semester");
+            const alamat = this.getAttribute("data-alamat");
+            const email = this.getAttribute("data-email");
+            const telp = this.getAttribute("data-telp");
+            const mhs = this.getAttribute("data-mhs");
+            // const golongan = this.getAttribute("data-golongan");
+            const ukt = this.getAttribute("data-ukt");
+            const stat = this.getAttribute("data-stat");
+            const foto = this.getAttribute("data-foto");
+
+            //Kalau gak ada foto
+            popupImage.src = foto || "https://via.placeholder.com/80/cccccc/ffffff?text=No+Image";
+
+            // Perbarui isi pop-up
+            popupTitle.textContent = judul;
+            popupImage.src = foto;
+            popupNama.textContent = nama;
+            popupNim.textContent = nim;
+            popupProdi.textContent = prodi;
+            // popupSemester.textContent = semester;
+            popupAlamat.textContent = alamat;
+            popupEmail.textContent = email;
+            popupMhs.textContent = mhs;
+            popupTelp.textContent = telp;
+            // popupGolongan.textContent = golongan;
+            popupUkt.textContent = ukt;
+            popupStat.textContent = stat;
+
+            // Tampilkan pop-up
+            popupContainer.style.display = "flex";
+        });
+    });
+
+    // Tutup popup
+    closePopup.addEventListener("click", function() {
+        popupContainer.style.display = "none";
+    });
+
+    // Tutup popup saat klik di luar konten
+    popupContainer.addEventListener("click", function(e) {
+        if (e.target === popupContainer) {
+            popupContainer.style.display = "none";
+        }
+    });
+});
+
+    </script>
+
+    <script>
+function changePerPage() {
+    const perPage = document.getElementById("perPageSelect").value;
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set("per_page", perPage);
+    currentUrl.searchParams.set("page", 1); // kembali ke halaman 1
+    window.location.href = currentUrl.toString();
+}
+</script>
+
+
+    <!-- <script>
+window.addEventListener("load", function () {
+  const globalLoading = document.getElementById("global-loading");
+  if (globalLoading) {
+    globalLoading.style.display = "none";
+    document.body.style.overflow = "auto";
+  }
+});
+</script> -->
+
+    <style>
+        a {
+            text-decoration: none; /* Menghilangkan underline */
+            color: black;
+        }
+
+        .export-btn {
+            background-color: #2b7cff;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .export-btn:hover {
+            background-color: #1059c0;
+        }
+
+        .spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #2b7cff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+    </style>
+</body>
+
+</html>

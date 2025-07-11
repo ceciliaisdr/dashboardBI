@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Mahasiswa Belum Isi KRS</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mahasiswadetail.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="FIK Logo">
+            </div>
+            <ul class="menu">
+                <li><a href="/dekanukt"><i class='bx bx-menu'></i> Home</a></li>
+                <li><a href="/dekanukt"><i class='bx bx-wallet'></i> UKT</a></li>
+                <li><a href="/dekanstatmhs"><i class='bx bx-user'></i> Status Mahasiswa</a></li>
+                <li><a href="/dekannilai"><i class='bx bx-pencil'></i> Nilai Mahasiswa</a></li>
+                <li><a href="/dekankrs" class="active"><i class='bx bx-file'></i> Pengisian KRS</a></li>
+                <li><a href="/help"><i class='bx bx-help-circle'></i> Help</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header>
+                <h1>Dashboard KRS - Detail Mahasiswa Belum Isi KRS</h1>
+                <i class='bx bx-user-circle profile-icon'></i>
+            </header>
+
+            <div class="kembali">
+                <p>
+                    <i class='bx bx-arrow-back'></i>
+                    <a href="/dekankrsbelumisi">Kembali</a>
+                </p>
+            </div>
+
+        <div class="profile-container">
+            <table class="profile-info">
+                    <tr>
+                        <td>Nama Mahasiswa</td>
+                        <td>:</td>
+                        <td class="detailmhs">{{ mahasiswa.nama }}</td>
+                    </tr>
+                    <tr>
+                        <td>NIM</td>
+                        <td>:</td>
+                        <td class="detailmhs">{{ mahasiswa.nim }}</td>
+                    </tr>
+                    <tr>
+                        <td>Program Studi</td>
+                        <td>:</td>
+                        <td class="detailmhs">{{ mahasiswa.prodi }}</td>
+                    </tr>
+                    <tr>
+                        <td>Semester</td>
+                        <td>:</td>
+                        <td class="detailmhs">{{ mahasiswa.semester }}</td>
+                    </tr>
+                    <tr>
+                        <td>Alamat</td>
+                        <td>:</td>
+                        <td class="detailmhs">{{ mahasiswa.alamat }}</td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td>:</td>
+                        <td class="detailmhs">{{ mahasiswa.email }}</td>
+                    </tr>
+                    <tr>
+                        <td>No. Telp</td>
+                        <td>:</td>
+                        <td class="detailmhs">{{ mahasiswa.telp }}</td>
+                    </tr>
+                    <tr>
+                        <td>Status Mahasiswa</td>
+                        <td>:</td>
+                        <td class="detailmhs">{{ mahasiswa.status }}</td>
+                    </tr>
+                    <!-- <tr>
+                        <td>Periode</td>
+                        <td>:</td>
+                        <td class="detailmhs">{{ mahasiswa.periode }}</td>
+                    </tr> -->
+                </table>
+        </div>
+    </div>
+</body>
+
+</html>

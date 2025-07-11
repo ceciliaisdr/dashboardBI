@@ -1,0 +1,332 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  display: flex;
+  height: 100vh;
+  margin: 0;
+  background-color: #F9F9F9;
+  flex-direction: column; /* Struktur fleksibel vertikal */
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  flex: 1;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #FFE5CF;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 13px;
+  height: 100%; /* Pastikan sidebar memanjang sesuai tinggi halaman */
+}
+
+.sidebar .logo img {
+  width: 200px;
+  margin-bottom: 0px;
+  margin-top: 10px;
+}
+
+.sidebar .menu {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.sidebar .menu li {
+  list-style: none;
+  margin: 15px 0;
+}
+
+.sidebar .menu a {
+  text-decoration: none;
+  color: #557C56;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 2px;
+  transition: background 0.3s;
+}
+
+.sidebar .menu a.active, .sidebar .menu a:hover {
+  background: #FF885B;
+  color: #ffffff;
+}
+
+.sidebar .menu a i {
+  margin-right: 10px;
+  font-size: 20px;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+}
+
+.content h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Kotak Dashboard Menu */
+.dashboard-menu-container {
+  padding: 20px;
+  background: #f6f6f6; /* Background abu-abu */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 10px; /* Membulatkan sudut */
+  margin-bottom: 30px; /* Jarak dari elemen lain */
+}
+
+.dashboard-menu-container h2 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333; /* Warna teks */
+  margin-bottom: 20px; /* Jarak antara judul dan dashboard-menu */
+}
+
+/* Kartu Menu Dashboard */
+.dashboard-menu {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px; /* Jarak antar kartu */
+  margin-top: 20px;
+  flex-wrap: wrap; /* Agar kartu dapat menyesuaikan jika tidak cukup ruang */
+}
+
+.dashboard-menu .card {
+  flex: 1;
+  display: flex; /* Menggunakan flexbox */
+  flex-direction: row-reverse; /* Membalik tata letak sehingga ikon berada di sebelah kanan */
+  align-items: center; /* Menyelaraskan secara vertikal */
+  background: #FFF;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s, background-color 0.3s;
+}
+
+.dashboard-menu .card-content {
+  display: flex;
+  flex-direction: column; /* Mengatur teks secara vertikal */
+  align-items: flex-start; /* Menyelaraskan teks di sebelah kiri */
+  flex-grow: 1; /* Mengisi ruang yang tersedia untuk konten teks */
+}
+
+.dashboard-menu .card:hover {
+  transform: translateY(-5px);
+  background: #557C56; /* Background hijau saat hover */
+  color: #ffffff; /* Warna teks berubah menjadi putih */
+}
+
+.dashboard-menu .card:hover i {
+  color: #FFFFFF; /* Ikon berubah menjadi putih saat hover */
+}
+
+.dashboard-menu .card:hover p {
+  color: #FFFFFF; /* Ikon berubah menjadi putih saat hover */
+}
+
+.dashboard-menu .card i {
+  font-size: 20px;
+  color: #333;
+  margin-right: 0;
+  /* margin-bottom: 10px; */
+  transition: color 0.3s; /* Efek perubahan warna ikon */
+}
+
+.dashboard-menu .card h3 {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: inherit;
+  /* flex-grow: 1; */
+}
+
+.dashboard-menu .card p {
+  font-size: 10px;
+  /* font-weight: bold; */
+  color: #717171;
+}
+
+.dashboard2 {
+    margin-top: 20px;
+}
+
+.diagram1-card{
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.diagram1-card h2 {
+    margin-bottom: 10px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.chart-wrapper2{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+    max-width: 1200px; /* Membatasi ukuran maksimum */
+    height: auto;    /* Menyesuaikan tinggi otomatis */
+    overflow: hidden; /* Mencegah elemen meluap */
+    margin: 0 auto;
+}
+
+.chart-wrapper2 canvas{
+    max-width: 100%;
+    max-height: 100%;
+    width: 100% !important;
+    height: auto !important;
+}
+
+.dashboard3 {
+    margin-top: 20px;
+}
+
+.diagram2-card{
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.diagram2-card h2 {
+    /* margin-top: 5px;
+    margin-bottom: 0px;
+    font-size: 16px;
+    text-align: center; */
+    margin-bottom: 10px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.chart-wrapper3{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+    max-width: 1200px; /* Membatasi ukuran maksimum */
+    height: auto;    /* Menyesuaikan tinggi otomatis */
+    overflow: hidden; /* Mencegah elemen meluap */
+    margin: 0 auto;
+}
+
+.chart-wrapper3 canvas{
+    max-width: 100%;
+    max-height: 100%;
+    width: 100% !important;
+    height: auto !important;
+}
+
+.btn-diagram7{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 0;
+}
+
+.diagram7btn{
+    font-size: 12px;
+    background-color: #FF885B;
+    border: 0.1px solid #ddd;
+    border-radius: 20px;
+    width: auto;
+    padding: 10px 20px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    text-align: center;
+    /* margin: 0 auto; */
+    color: #F9F9F9;
+}
+
+.diagram7btn:hover {
+    background-color: #ffffff;
+    color: #333;
+    transform: translateY(-2px);
+}
+
+/* Dropdown Button */
+.rataipk {
+    position: relative;
+    display: inline-block;
+    /* margin-bottom: 0px; */
+    /* margin-left: 0; */
+    width: 200px;
+    margin-top: 15px;
+    align-self: flex-end;
+    margin-left: 20px;
+}
+
+/* Style untuk dropdown select */
+.dropdown-select {
+  background-color: #f4f4f4;
+  /* color: #333; */
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  width: 160px;
+  cursor: pointer;
+}
+/* .dropdown-button{
+    background-color: #f4f4f4;
+    color: #333;
+    padding: 10px 20px;
+    font-size: 14px;
+    border: 0.1px solid #ddd;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    text-align: right;
+    align-items: flex-end;
+}
+
+
+.dropdown-content1 {
+    display: none; 
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content1 a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: flex;
+    font-size: 12px;
+}
+
+.dropdown-content1 a:hover {
+    background-color: #ddd;
+}
+
+.dropdown-content1.show{
+    display: block;
+}
+
+.pengajuanukt .dropdown-content1 {
+    display: block;
+} */

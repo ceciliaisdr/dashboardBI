@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard KRS</title>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dekankrs.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="FIK Logo">
+      </div>
+      <ul class="menu">
+        <li><a href="/home"><i class='bx bx-menu'></i> Home</a></li>
+        <li><a href="/dekanukt"><i class='bx bx-wallet'></i> UKT</a></li>
+        <li><a href="/dekanstatmhs"><i class='bx bx-user'></i> Status Mahasiswa</a></li>
+        <li><a href="/dekannilai"><i class='bx bx-pencil'></i> Nilai Mahasiswa</a></li>
+        <li><a href="/dekankrs" class="active"><i class='bx bx-file'></i> Pengisian KRS</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <header>
+        <h1>Dashboard KRS</h1>
+        <a href="/logout"><i class='bx bx-user-circle profile-icon'></i></a>
+      </header>
+
+      <!-- Tabel Jadwal -->
+      <div class="dashboard1">
+        <div class="chart-table-section">
+          <div class="chart-card">
+            <div class="table-card">
+              <div class="title-section">
+                <h2>Tabel Jadwal Pengisian KRS</h2>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Tahun Ajaran</th>
+                    <th>Semester</th>
+                    <th>Tanggal Mulai</th>
+                    <th>Tanggal Selesai</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for jadwal in jadwal_krs %}
+                  <tr>
+                    <td>{{ jadwal.tahun_ajaran }}</td>
+                    <td>{{ jadwal.semester }}</td>
+                    <td>{{ jadwal.tanggal_mulai }}</td>
+                    <td>{{ jadwal.tanggal_selesai }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bar Chart -->
+      <div class="dashboard2">
+        <div class="diagram1">
+          <div class="diagram1-card">
+            <h2>Perbandingan Mahasiswa Aktif, Non Aktif, dan Aktif Tidak Isi KRS</h2>
+            <div class="dropdown-container">
+              <div class="custom-select">
+                <select id="angkatanDropdown" class="dropdown-select">
+                  <option value="ALL">Semua Angkatan</option>
+                  <option value="2020">2020</option>
+                  <option value="2021">2021</option>
+                  <option value="2022">2022</option>
+                  <option value="2023">2023</option>
+                  <option value="2024">2024</option>
+                </select>
+              </div>
+            </div>
+            <div class="chart-wrapper2">
+              <canvas id="krsBarChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail Mahasiswa Belum Isi KRS -->
+      <div class="dashboard2">
+        <div class="diagram1">
+          <div class="chart-card">
+            <div class="title-section">
+              <h2>Detail Mahasiswa Belum Isi Krs</h2>
+              <div class="isi">
+                <div class="btn-diagram2">
+                  <button class="diagram2btn" onclick="redirectToDetail()">Lihat Detail</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+const ctx = document.getElementById('krsBarChart').getContext('2d');
+let krsBarChart;
+
+function renderChart(data) {
+  const labels = Object.keys(data);
+  const statusLabels = ["AKTIF", "MENUNGGU ISI KRS", "NON-AKTIF"];
+  const colors = ["#4caf50", "#ffc107", "#f44336"];
+
+  const datasets = statusLabels.map((status, idx) => ({
+    label: status,
+    backgroundColor: colors[idx],
+    data: labels.map(prodi => data[prodi][status] || 0),
+    barThickness: 30
+  }));
+
+  if (krsBarChart) {
+    krsBarChart.destroy();
+  }
+
+  krsBarChart = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: { mode: 'index', intersect: false }
+      },
+      scales: {
+        x: { stacked: false },
+        y: { beginAtZero: true }
+      }
+    }
+  });
+}
+
+function fetchChartData() {
+  const angkatan = document.getElementById('angkatanDropdown').value;
+  fetch(`/api/krs-status-comparison?angkatan=${angkatan}`)
+    .then(res => res.json())
+    .then(data => renderChart(data));
+}
+
+function redirectToDetail() {
+  window.location.href = "/dekanbelumisikrs";
+}
+
+document.getElementById('angkatanDropdown').addEventListener('change', fetchChartData);
+window.addEventListener('DOMContentLoaded', fetchChartData);
+</script>
+</body>
+</html>

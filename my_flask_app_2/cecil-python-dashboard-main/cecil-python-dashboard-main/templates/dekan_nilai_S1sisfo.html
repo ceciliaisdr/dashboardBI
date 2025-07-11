@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daftar Mahasiswa S1 Sistem Informasi</title>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dekan_nilai_S1sisfo.css') }}" />
+  <style>
+    /* Sedikit bantuan tampilan pagination */
+    .pagination {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .pagination button {
+      padding: 0.4rem 0.8rem;
+      border: 1px solid #ccc;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .pagination button.active {
+      background: #007bff;
+      color: #fff;
+    }
+
+    .pagination button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="FIK Logo" />
+      </div>
+      <ul class="menu">
+        <li><a href="/home"><i class='bx bx-menu'></i> Home</a></li>
+        <li><a href="/dekanukt"><i class='bx bx-wallet'></i> UKT</a></li>
+        <li><a href="/dekanstatmhs"><i class='bx bx-user'></i> Status Mahasiswa</a></li>
+        <li><a href="/dekannilai" class="active"><i class='bx bx-pencil'></i> Nilai Mahasiswa</a></li>
+        <li><a href="/dekankrs"><i class='bx bx-file'></i> Pengisian KRS</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <header>
+        <h1>Dashboard Nilai&nbsp;‑&nbsp;S1 Sistem Informasi</h1>
+        <a href="/logout"><i class='bx bx-user-circle profile-icon'></i></a>
+      </header>
+
+      <div class="kembali">
+        <p><i class='bx bx-arrow-back'></i> <a href="/s1sisfo">Kembali</a></p>
+      </div>
+
+      <div class="search-filter-container">
+        <div class="search-container">
+          <input type="text" id="searchInput" placeholder="Cari nama mahasiswa..." />
+        </div>
+
+        <div class="filter">
+          <div class="dropdown">
+            <select id="filterDropdown">
+              <option value="all">Semua Angkatan</option>
+            </select>
+            <i class='bx bx-chevron-down'></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>NIM</th>
+              <th>Nama Mahasiswa</th>
+              <th>Semester</th>
+              <th>Detail Mahasiswa</th>
+            </tr>
+          </thead>
+          <tbody id="dataTable"></tbody>
+        </table>
+      </div>
+
+      <!-- Pagination controls -->
+      <div id="pagination" class="pagination"></div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      /* =========  DATA MAHASISWA HARDCODE  ========= */
+      const allData = [
+        { nim: "21105101", nama: "Ayu Rahmawati", semester: 6, angkatan: "2021" },
+        { nim: "21105102", nama: "Budi Santoso", semester: 6, angkatan: "2021" },
+        { nim: "21105103", nama: "Citra Lestari", semester: 6, angkatan: "2021" },
+        { nim: "21105104", nama: "Dimas Pratama", semester: 6, angkatan: "2021" },
+        { nim: "22105105", nama: "Eka Sari", semester: 4, angkatan: "2022" },
+        { nim: "22105106", nama: "Fajar Nugroho", semester: 4, angkatan: "2022" },
+        { nim: "22105107", nama: "Gilang Saputra", semester: 4, angkatan: "2022" },
+        { nim: "22105108", nama: "Haniyah Zahra", semester: 4, angkatan: "2022" },
+        { nim: "23105109", nama: "Indra Kurniawan", semester: 2, angkatan: "2023" },
+        { nim: "23105110", nama: "Jihan Safitri", semester: 2, angkatan: "2023" },
+        { nim: "23105111", nama: "Kevin Wijaya", semester: 2, angkatan: "2023" },
+        { nim: "23105112", nama: "Lia Febriana", semester: 2, angkatan: "2023" },
+        { nim: "20105113", nama: "Maya Andini", semester: 8, angkatan: "2020" },
+        { nim: "20105114", nama: "Nanda Kusuma", semester: 8, angkatan: "2020" },
+        { nim: "20105115", nama: "Oka Prabowo", semester: 8, angkatan: "2020" },
+        { nim: "20105116", nama: "Putri Amelia", semester: 8, angkatan: "2020" },
+        { nim: "19105117", nama: "Rian Hidayat", semester: 10, angkatan: "2019" },
+        { nim: "19105118", nama: "Siti Maulida", semester: 10, angkatan: "2019" },
+        { nim: "19105119", nama: "Taufik Hidayat", semester: 10, angkatan: "2019" },
+        { nim: "19105120", nama: "Uli Apriani", semester: 10, angkatan: "2019" },
+        { nim: "18105121", nama: "Vera Oktavia", semester: 12, angkatan: "2018" },
+        { nim: "18105122", nama: "Wahyu Firmansyah", semester: 12, angkatan: "2018" },
+        { nim: "18105123", nama: "Xavier Yudha", semester: 12, angkatan: "2018" },
+        { nim: "18105124", nama: "Yani Marlina", semester: 12, angkatan: "2018" },
+        { nim: "17105125", nama: "Zaky Alfian", semester: 14, angkatan: "2017" },
+        { nim: "17105126", nama: "Abdul Ghani", semester: 14, angkatan: "2017" },
+        { nim: "17105127", nama: "Bella Ramadhani", semester: 14, angkatan: "2017" },
+        { nim: "17105128", nama: "Cahya Saputri", semester: 14, angkatan: "2017" },
+        { nim: "24105129", nama: "Dito Alfareza", semester: 1, angkatan: "2024" },
+        { nim: "24105130", nama: "Elin Nurul", semester: 1, angkatan: "2024" },
+        { nim: "24105131", nama: "Fauzan Hanif", semester: 1, angkatan: "2024" },
+        { nim: "24105132", nama: "Gita Permata", semester: 1, angkatan: "2024" },
+        { nim: "24105133", nama: "Hanif Maulana", semester: 1, angkatan: "2024" },
+        { nim: "24105134", nama: "Intan Lestari", semester: 1, angkatan: "2024" },
+        { nim: "24105135", nama: "Jerry Purnama", semester: 1, angkatan: "2024" },
+        { nim: "24105136", nama: "Kiki Andra", semester: 1, angkatan: "2024" },
+        { nim: "24105137", nama: "Linda Fauziah", semester: 1, angkatan: "2024" },
+        { nim: "24105138", nama: "Michael Sitorus", semester: 1, angkatan: "2024" },
+        { nim: "24105139", nama: "Novi Rahmadani", semester: 1, angkatan: "2024" },
+        { nim: "24105140", nama: "Odelia Grace", semester: 1, angkatan: "2024" }
+      ];
+
+      /* =========  DOM ELEMEN ========= */
+      const tableBody = document.getElementById("dataTable");
+      const searchInput = document.getElementById("searchInput");
+      const filterDropdown = document.getElementById("filterDropdown");
+      const paginationDiv = document.getElementById("pagination");
+
+      /* =========  KONFIGURASI PAGINATION ========= */
+      const ROWS_PER_PAGE = 10;
+      let currentPage = 1;
+
+      /* =========  PERSIAPAN DROPDOWN ANGKATAN ========= */
+      const angkatanSet = new Set(allData.map(m => m.angkatan));
+      Array.from(angkatanSet).sort((a, b) => b - a).forEach(angkatan => {
+        const opt = document.createElement("option");
+        opt.value = angkatan;
+        opt.textContent = angkatan;
+        filterDropdown.appendChild(opt);
+      });
+
+      /* =========  RENDER TABEL + PAGINATION ========= */
+      function renderTable(data) {
+        tableBody.innerHTML = "";
+        if (data.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="4">Data tidak ditemukan.</td></tr>`;
+          paginationDiv.innerHTML = "";
+          return;
+        }
+
+        const pageData = paginate(data, currentPage, ROWS_PER_PAGE);
+        pageData.forEach(mhs => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${mhs.nim}</td>
+            <td>${mhs.nama}</td>
+            <td>${mhs.semester}</td>
+            <td><a href="/detailnilaisisfo/${mhs.nim}">Detail Mahasiswa</a></td>`;
+          tableBody.appendChild(row);
+        });
+
+        renderPagination(data.length);
+      }
+
+      function paginate(array, page, size) {
+        const start = (page - 1) * size;
+        return array.slice(start, start + size);
+      }
+
+      function renderPagination(totalRows) {
+        const totalPages = Math.ceil(totalRows / ROWS_PER_PAGE);
+        paginationDiv.innerHTML = "";
+
+        if (totalPages <= 1) return; // tak perlu pagination
+
+        const prevBtn = createPageButton("«", currentPage > 1, () => changePage(currentPage - 1));
+        paginationDiv.appendChild(prevBtn);
+
+        for (let i = 1; i <= totalPages; i++) {
+          const btn = createPageButton(i, true, () => changePage(i));
+          if (i === currentPage) btn.classList.add("active");
+          paginationDiv.appendChild(btn);
+        }
+
+        const nextBtn = createPageButton("»", currentPage < totalPages, () => changePage(currentPage + 1));
+        paginationDiv.appendChild(nextBtn);
+      }
+
+      function createPageButton(text, enabled, onClick) {
+        const btn = document.createElement("button");
+        btn.textContent = text;
+        btn.disabled = !enabled;
+        if (enabled) btn.addEventListener("click", onClick);
+        return btn;
+      }
+
+      function changePage(newPage) {
+        currentPage = newPage;
+        applyFilters();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      /* =========  FILTER & SEARCH ========= */
+      function applyFilters() {
+        const searchVal = searchInput.value.toLowerCase();
+        const filterVal = filterDropdown.value;
+
+        const filtered = allData.filter(m => {
+          const matchesName = m.nama.toLowerCase().includes(searchVal);
+          const matchesAngkatan = filterVal === "all" || m.angkatan === filterVal;
+          return matchesName && matchesAngkatan;
+        });
+
+        /* reset ke halaman 1 jika currentPage > totalPages */
+        const totalPages = Math.ceil(filtered.length / ROWS_PER_PAGE) || 1;
+        if (currentPage > totalPages) currentPage = 1;
+
+        renderTable(filtered);
+      }
+
+      /* =========  EVENT LISTENERS ========= */
+      searchInput.addEventListener("input", () => {
+        currentPage = 1;
+        applyFilters();
+      });
+
+      filterDropdown.addEventListener("change", () => {
+        currentPage = 1;
+        applyFilters();
+      });
+
+      /* =========  RENDER AWAL ========= */
+      applyFilters();
+    });
+  </script>
+
+</body>
+
+</html>
